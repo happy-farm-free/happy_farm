@@ -257,6 +257,7 @@
           <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl">
             <span class="text-lg">👨‍🌾</span>
             <span id="hud-player-name" class="font-extrabold text-emerald-950 text-sm sm:text-base"></span>
+            <span id="hud-level-badge" title="المستوى ونقاط الخبرة" class="text-[11px] font-black bg-amber-400 text-amber-950 px-2 py-0.5 rounded-lg shadow-sm">⭐ م1</span>
           </div>
 
           <div id="hud-balance-box" class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-300 px-3 py-1.5 rounded-xl shadow-sm">
@@ -278,6 +279,12 @@
               <span>✕ خروج</span>
             </button>
           </div>
+
+          <!-- Active Arrange Mode Pill -->
+          <div id="arrange-mode-pill" class="hidden items-center gap-2 bg-purple-600 text-white px-3 py-1.5 rounded-xl shadow-md border border-purple-400 anim-pop">
+            <span class="text-sm font-extrabold">🔀 وضع الترتيب: حرّك بالأسهم أو اسحب</span>
+            <button id="btn-exit-arrange" type="button" class="btn-press bg-white/20 hover:bg-red-500 text-white text-xs font-extrabold px-2 py-0.5 rounded-lg transition">✕ إنهاء</button>
+          </div>
         </div>
 
         <!-- Left side: Action Controls -->
@@ -297,6 +304,17 @@
             <i data-lucide="users" class="w-4 h-4"></i>
             <span>العملاء</span>
             <span id="hud-customers-badge" class="bg-white text-indigo-800 text-[11px] font-black px-1.5 rounded-full">0</span>
+          </button>
+
+          <button id="btn-open-quests" type="button" class="btn-press bg-rose-500 hover:bg-rose-600 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
+            <span>🏆</span>
+            <span class="hidden sm:inline">المهام</span>
+            <span id="hud-quests-badge" class="hidden bg-white text-rose-700 text-[11px] font-black px-1.5 rounded-full">0</span>
+          </button>
+
+          <button id="btn-toggle-arrange" type="button" title="تحريك وترتيب عناصر المزرعة" class="btn-press bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1">
+            <span>🔀</span>
+            <span class="hidden sm:inline">ترتيب</span>
           </button>
 
           <button id="btn-open-notifications" type="button" title="الإشعارات" class="btn-press relative bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl border border-slate-200">
@@ -332,9 +350,14 @@
           <button data-zone-jump="animals" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100">🐄 الحيوانات (<span id="count-animals">0</span>)</button>
           <button data-zone-jump="machines" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100">🏭 الماكينات (<span id="count-machines">0</span>)</button>
           <button data-zone-jump="customers" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100">🏪 العملاء (<span id="count-customers">0</span>)</button>
-          <div class="mr-auto hidden sm:flex items-center gap-1.5 text-[11px] text-emerald-800 bg-white/80 px-2.5 py-1 rounded-lg border border-emerald-200">
-            <span>⏱️ السرعة:</span>
-            <span id="hud-speed-label" class="font-black text-emerald-700">1x حقيقي</span>
+          <button data-zone-jump="decorations" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100">🎨 الزينة (<span id="count-decorations">0</span>)</button>
+          <div class="mr-auto flex items-center gap-1.5 shrink-0">
+            <span id="hud-weather-pill" class="text-[11px] font-extrabold text-sky-900 bg-sky-100/90 px-2.5 py-1 rounded-lg border border-sky-200">☀️ مشمس</span>
+            <span id="hud-hot-pill" class="hidden md:inline-flex items-center gap-1 text-[11px] font-extrabold text-orange-900 bg-orange-100/90 px-2.5 py-1 rounded-lg border border-orange-200">🔥 منتج اليوم</span>
+            <div class="hidden lg:flex items-center gap-1 text-[11px] text-emerald-800 bg-white/80 px-2.5 py-1 rounded-lg border border-emerald-200">
+              <span>⏱️</span>
+              <span id="hud-speed-label" class="font-black text-emerald-700">1x حقيقي</span>
+            </div>
           </div>
         </div>
       </div>
@@ -385,6 +408,7 @@
             </div>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
+            <button data-auto-sort="land" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button>
             <button id="btn-harvest-all-crops" type="button" class="btn-press hidden bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">
               🌾 حصاد كل الجاهز
             </button>
@@ -406,9 +430,9 @@
               <p class="text-xs text-slate-500">تُشترى مرة واحدة وتنتج تلقائياً باستمرار بعد كل حصاد</p>
             </div>
           </div>
-          <button data-open-shop-tab="trees" type="button" class="btn-press bg-green-100 hover:bg-green-200 text-green-900 border border-green-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="trees" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="trees" type="button" class="btn-press bg-green-100 hover:bg-green-200 text-green-900 border border-green-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء شجرة من المتجر
-          </button>
+          </button></div>
         </div>
         <div id="trees-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
       </section>
@@ -423,9 +447,9 @@
               <p class="text-xs text-slate-500">اضغط لإطعام الحيوان ثم اجمع إنتاجه • بركة السمك تضم 5 سمكات وتنتج 3 سمكات بالمرة</p>
             </div>
           </div>
-          <button data-open-shop-tab="animals" type="button" class="btn-press bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="animals" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="animals" type="button" class="btn-press bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء حيوان أو بركة سمك
-          </button>
+          </button></div>
         </div>
         <div id="animals-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5"></div>
       </section>
@@ -440,9 +464,9 @@
               <p class="text-xs text-slate-500">حوّل المحاصيل والمنتجات الحيوانية إلى منتجات عالية القيمة للعملاء</p>
             </div>
           </div>
-          <button data-open-shop-tab="machines" type="button" class="btn-press bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="machines" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="machines" type="button" class="btn-press bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء ماكينة من المتجر
-          </button>
+          </button></div>
         </div>
         <div id="machines-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5"></div>
       </section>
@@ -462,6 +486,26 @@
           </button>
         </div>
         <div id="customers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- ZONE 6: FARM DECORATIONS -->
+      <section id="zone-decorations" class="farm-zone-card rounded-3xl p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-10 h-10 rounded-2xl bg-pink-100 text-2xl flex items-center justify-center border border-pink-200">🎨</span>
+            <div>
+              <h2 class="text-lg font-black text-slate-800">ساحة الزينة والديكور</h2>
+              <p class="text-xs text-slate-500">زيّن مزرعتك بالديكورات ورتّب أماكنها بحرية في وضع الترتيب</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button data-auto-sort="decorations" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button>
+            <button data-open-shop-tab="decorations" type="button" class="btn-press bg-pink-100 hover:bg-pink-200 text-pink-900 border border-pink-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+              + شراء ديكور من المتجر
+            </button>
+          </div>
+        </div>
+        <div id="decorations-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
       </section>
     </main>
   </div>
@@ -591,6 +635,38 @@
           purchasePrice: 12,
           description: 'طعم على شكل دود لتغذية بركة السمك (تنتج 3 سمكات في المرة الواحدة)',
         },
+        {
+          id: 'magic_fertilizer',
+          name: 'سماد سحري',
+          icon: '✨',
+          type: 'misc',
+          purchasePrice: 20,
+          description: 'يُستخدم على أي محصول قيد النمو لتقليل وقت النمو المتبقي إلى النصف فوراً!',
+        },
+        {
+          id: 'super_feed',
+          name: 'علف ممتاز (2×)',
+          icon: '🌟',
+          type: 'misc',
+          purchasePrice: 25,
+          description: 'يُستخدم على أي حيوان أثناء الإنتاج لمضاعفة كمية إنتاجه (2×) في تلك الدورة!',
+        },
+      ];
+
+      const DECORATIONS = [
+        { id: 'deco_fence', name: 'سور خشبي أنيق', icon: '🪵', purchasePrice: 40, desc: 'يحدد ممرات المزرعة بلمسة ريفية دافئة' },
+        { id: 'deco_flowers', name: 'حوض أزهار زينة', icon: '🌷', purchasePrice: 50, desc: 'ألوان مبهجة تزين ساحة المزرعة' },
+        { id: 'deco_lantern', name: 'فانوس المزرعة', icon: '🏮', purchasePrice: 75, desc: 'إضاءة دافئة لمزرعتك السعيدة' },
+        { id: 'deco_well', name: 'بئر مياه حجري', icon: '🪣', purchasePrice: 120, desc: 'بئر تراثي جميل لري المزروعات' },
+        { id: 'deco_fountain', name: 'نافورة مياه', icon: '⛲', purchasePrice: 180, desc: 'نافورة فاخرة تضفي حيوية للمكان' },
+        { id: 'deco_windmill', name: 'طاحونة هواء', icon: '🎡', purchasePrice: 250, desc: 'معلم مميز يرفع جمال المزرعة' },
+      ];
+
+      const WEATHERS = [
+        { id: 'sunny', name: 'يوم مشمس', icon: '☀️', desc: 'الأشجار أسرع +20%', treeSpeedBonus: 0.2, cropSpeedBonus: 0, customerBonus: 0 },
+        { id: 'rain', name: 'مطر لطيف', icon: '🌧️', desc: 'المحاصيل أسرع +25%', treeSpeedBonus: 0, cropSpeedBonus: 0.25, customerBonus: 0 },
+        { id: 'festival', name: 'موسم أعياد', icon: '🎉', desc: 'مكافآت العملاء +15%', treeSpeedBonus: 0, cropSpeedBonus: 0, customerBonus: 0.15 },
+        { id: 'mild', name: 'طقس معتدل', icon: '🌤️', desc: 'أجواء مثالية للزراعة', treeSpeedBonus: 0, cropSpeedBonus: 0, customerBonus: 0 },
       ];
 
       // --- 12 ANIMALS (Including Fish Pond: 5 fish, eats worms, produces 3 fish!) ---
@@ -1235,16 +1311,15 @@
           return Boolean(this.loadAccount(name));
         },
         loadAccount(name) {
-          const primary = this.get(this.accountKey(name), null);
-          if (primary) return primary;
-          const legacy = this.get(this.legacyAccountKey(name), null);
-          if (legacy) return legacy;
-          const target = this.canonicalName(name);
-          const matchedName = this.listAccounts().find((a) => this.canonicalName(a) === target);
-          if (matchedName) {
-            return this.get(this.accountKey(matchedName), null) || this.get(this.legacyAccountKey(matchedName), null);
+          let found = this.get(this.accountKey(name), null) || this.get(this.legacyAccountKey(name), null);
+          if (!found) {
+            const target = this.canonicalName(name);
+            const matchedName = this.listAccounts().find((a) => this.canonicalName(a) === target);
+            if (matchedName) {
+              found = this.get(this.accountKey(matchedName), null) || this.get(this.legacyAccountKey(matchedName), null);
+            }
           }
-          return null;
+          return found ? migrateAccountState(found) : null;
         },
         saveAccount(accState) {
           if (!accState || !accState.name) return;
@@ -1340,6 +1415,73 @@
         };
       }
 
+      function createQuestForType(type, level = 1) {
+        const scale = Math.max(1, Math.floor(level));
+        const templates = {
+          harvest: { icon: '🌾', title: (t) => `احصد ${t} محاصيل زراعية`, target: 3 + scale * 2, rewardMoney: 80 + scale * 30, rewardXp: 40 },
+          feed: { icon: '🐄', title: (t) => `أطعم الحيوانات ${t} مرات`, target: 2 + scale, rewardMoney: 90 + scale * 35, rewardXp: 45 },
+          craft: { icon: '🏭', title: (t) => `أنتج ${t} منتجات من الماكينات`, target: 1 + Math.ceil(scale / 2), rewardMoney: 140 + scale * 40, rewardXp: 60 },
+          deliver: { icon: '🤝', title: (t) => `سلّم ${t} طلبات للعملاء`, target: 1 + Math.ceil(scale / 2), rewardMoney: 160 + scale * 50, rewardXp: 70 },
+          urgent: { icon: '⚡', title: (t) => `سلّم ${t} طلب مستعجل`, target: 1, rewardMoney: 220 + scale * 50, rewardXp: 90 },
+        };
+        const tpl = templates[type] || templates.harvest;
+        return {
+          id: makeId('q'),
+          type,
+          icon: tpl.icon,
+          title: tpl.title(tpl.target),
+          target: tpl.target,
+          progress: 0,
+          rewardMoney: tpl.rewardMoney,
+          rewardXp: tpl.rewardXp,
+        };
+      }
+
+      function pickRandomHotItemId() {
+        const sellables = Object.values(ITEMS_BY_ID).filter((it) => it.warehouseSellPrice && it.category !== 'seeds');
+        if (!sellables.length) return 'tomato';
+        return sellables[Math.floor(Math.random() * sellables.length)].id;
+      }
+
+      /**
+       * Non-destructive migration: preserves 100% of existing saved accounts
+       * across updates while safely adding new fields if missing.
+       */
+      function migrateAccountState(acc) {
+        if (!acc || typeof acc !== 'object') return acc;
+        if (typeof acc.xp !== 'number') acc.xp = 0;
+        if (typeof acc.level !== 'number' || acc.level < 1) acc.level = 1;
+        if (typeof acc.completedOrders !== 'number') acc.completedOrders = 0;
+        if (!Array.isArray(acc.land)) acc.land = [];
+        if (!Array.isArray(acc.trees)) acc.trees = [];
+        if (!Array.isArray(acc.animals)) acc.animals = [];
+        if (!Array.isArray(acc.machines)) acc.machines = [];
+        acc.machines.forEach((m) => { if (!m.level) m.level = 1; });
+        if (!Array.isArray(acc.decorations)) acc.decorations = [];
+        if (!acc.warehouse || typeof acc.warehouse !== 'object') acc.warehouse = {};
+        if (!Array.isArray(acc.customers)) acc.customers = [];
+        if (!Array.isArray(acc.notifications)) acc.notifications = [];
+        if (!acc.settings || typeof acc.settings !== 'object') acc.settings = { soundEnabled: true, timeMultiplier: 1 };
+        if (!acc.timestamps || typeof acc.timestamps !== 'object') acc.timestamps = { createdAt: Date.now(), updatedAt: Date.now() };
+        if (!Array.isArray(acc.quests) || acc.quests.length === 0) {
+          acc.quests = [
+            createQuestForType('harvest', acc.level),
+            createQuestForType('feed', acc.level),
+            createQuestForType('deliver', acc.level),
+          ];
+        }
+        if (!acc.weather || !WEATHERS.some((w) => w.id === acc.weather.id)) {
+          acc.weather = { id: 'sunny', changedAt: Date.now() };
+        }
+        if (!acc.marketHotItem || !ITEMS_BY_ID[acc.marketHotItem.itemId]) {
+          acc.marketHotItem = { itemId: pickRandomHotItemId(), changedAt: Date.now() };
+        }
+        if (!acc.stats || typeof acc.stats !== 'object') {
+          acc.stats = { harvests: 0, feeds: 0, crafts: 0, urgentDeliveries: 0 };
+        }
+        return acc;
+      }
+
       function createFreshAccount(playerName) {
         const now = Date.now();
         const appleTree = TREES.find((t) => t.id === 'tree_apple');
@@ -1420,6 +1562,8 @@
       let authMode = 'register'; // 'register' | 'login'
       let activeZoneFilter = 'all';
       let activePlantingSeedId = null; // Continuous planting mode!
+      let arrangeMode = false; // Move & reorder mode!
+      let dragSource = null;
       let activeModal = null; // null | 'shop' | 'warehouse' | 'customers' | 'notifications' | 'settings' | 'seedPicker' | 'machineModal'
       let activeShopTab = 'seeds';
       let activeWarehouseTab = 'crops';
@@ -1471,9 +1615,212 @@
         return true;
       }
 
-      function getEffectiveDurationMs(baseSeconds) {
+      function getCurrentWeather() {
+        const wid = state && state.weather ? state.weather.id : 'sunny';
+        return WEATHERS.find((w) => w.id === wid) || WEATHERS[0];
+      }
+
+      function getEffectiveDurationMs(baseSeconds, kind = 'generic', machineLevel = 1) {
         const mult = (state && state.settings && state.settings.timeMultiplier) || 1;
-        return Math.max(2000, Math.round((baseSeconds * 1000) / mult));
+        const w = getCurrentWeather();
+        let speedFactor = 1;
+        if (kind === 'crop' && w.cropSpeedBonus) speedFactor += w.cropSpeedBonus;
+        if (kind === 'tree' && w.treeSpeedBonus) speedFactor += w.treeSpeedBonus;
+        if (kind === 'machine') {
+          if (machineLevel === 2) speedFactor += 0.25;
+          if (machineLevel >= 3) speedFactor += 0.45;
+        }
+        return Math.max(2000, Math.round((baseSeconds * 1000) / (mult * speedFactor)));
+      }
+
+      function xpNeededForLevel(lvl) {
+        return Math.max(100, lvl * 100);
+      }
+
+      function grantXP(amount, anchorEl = null) {
+        if (!state || amount <= 0) return;
+        state.xp = (state.xp || 0) + amount;
+        while (state.xp >= xpNeededForLevel(state.level || 1)) {
+          state.xp -= xpNeededForLevel(state.level || 1);
+          state.level = (state.level || 1) + 1;
+          const bonus = state.level * 200;
+          state.balance += bonus;
+          SoundEngine.success();
+          pushNotification('⭐', `ترقّيت إلى المستوى ${state.level}! مكافأة الترقية: +${formatMoney(bonus)} جنيه 🎉`);
+          showToast(`مبروك! وصلت للمستوى ${state.level} (+${formatMoney(bonus)} جنيه) ⭐`, 'success', '🎉');
+          spawnFloatingFX(`⭐ مستوى ${state.level}! +${formatMoney(bonus)} ج`, 'text-amber-600', anchorEl);
+        }
+      }
+
+      function advanceQuests(type, amount = 1) {
+        if (!state || !Array.isArray(state.quests)) return;
+        state.quests.forEach((q) => {
+          if (q.type === type && q.progress < q.target) {
+            q.progress = Math.min(q.target, q.progress + amount);
+            if (q.progress >= q.target) {
+              showToast(`أنجزت مهمة: ${q.title} — افتح «المهام» لاستلام المكافأة!`, 'success', '🏆');
+            }
+          }
+        });
+      }
+
+      function claimQuest(questId, anchorEl = null) {
+        if (!state || !Array.isArray(state.quests)) return;
+        const idx = state.quests.findIndex((q) => q.id === questId);
+        if (idx === -1) return;
+        const q = state.quests[idx];
+        if (q.progress < q.target) return;
+        SoundEngine.success();
+        adjustBalance(q.rewardMoney, `مكافأة مهمة: ${q.title}`, anchorEl);
+        grantXP(q.rewardXp, anchorEl);
+        const allTypes = ['harvest', 'feed', 'craft', 'deliver', 'urgent'];
+        const existingTypes = state.quests.filter((_, i) => i !== idx).map((x) => x.type);
+        const candidates = allTypes.filter((t) => !existingTypes.includes(t));
+        const nextType = candidates[Math.floor(Math.random() * candidates.length)] || 'harvest';
+        state.quests[idx] = createQuestForType(nextType, state.level || 1);
+        saveAndRender();
+      }
+
+      function maybeRotateWeatherAndMarket(now) {
+        if (!state) return false;
+        let rotated = false;
+        const ROTATE_MS = 5 * 60 * 1000;
+        if (!state.weather || now - (state.weather.changedAt || 0) >= ROTATE_MS) {
+          const next = WEATHERS[Math.floor(Math.random() * WEATHERS.length)];
+          state.weather = { id: next.id, changedAt: now };
+          pushNotification(next.icon, `تغيّر الطقس إلى: ${next.name} (${next.desc})`);
+          rotated = true;
+        }
+        if (!state.marketHotItem || now - (state.marketHotItem.changedAt || 0) >= ROTATE_MS) {
+          const nextItemId = pickRandomHotItemId();
+          state.marketHotItem = { itemId: nextItemId, changedAt: now };
+          const it = ITEMS_BY_ID[nextItemId];
+          if (it) pushNotification('🔥', `منتج اليوم في السوق: ${it.name} (+30% سعر بيع في المخزن)!`);
+          rotated = true;
+        }
+        return rotated;
+      }
+
+      function getGridColumns(gridId) {
+        const el = document.getElementById(gridId);
+        if (!el) return 3;
+        const style = window.getComputedStyle(el);
+        const cols = (style.gridTemplateColumns || '').split(' ').filter(Boolean).length;
+        return Math.max(1, cols);
+      }
+
+      function moveFarmItem(zone, index, dir) {
+        if (!state || !Array.isArray(state[zone])) return;
+        const arr = state[zone];
+        const cols = getGridColumns(`${zone}-grid`);
+        let targetIdx = index;
+        // In RTL layout: right is index - 1, left is index + 1
+        if (dir === 'right') targetIdx = index - 1;
+        else if (dir === 'left') targetIdx = index + 1;
+        else if (dir === 'up') targetIdx = index - cols;
+        else if (dir === 'down') targetIdx = index + cols;
+        if (targetIdx < 0 || targetIdx >= arr.length || targetIdx === index) return;
+        const tmp = arr[index];
+        arr[index] = arr[targetIdx];
+        arr[targetIdx] = tmp;
+        SoundEngine.click();
+        saveAndRender();
+      }
+
+      function swapFarmItems(zone, fromIdx, toIdx) {
+        if (!state || !Array.isArray(state[zone])) return;
+        const arr = state[zone];
+        if (fromIdx < 0 || toIdx < 0 || fromIdx >= arr.length || toIdx >= arr.length || fromIdx === toIdx) return;
+        const tmp = arr[fromIdx];
+        arr[fromIdx] = arr[toIdx];
+        arr[toIdx] = tmp;
+        SoundEngine.click();
+        saveAndRender();
+      }
+
+      function autoSortZone(zone) {
+        if (!state || !Array.isArray(state[zone])) return;
+        if (zone === 'land') {
+          const rank = { ready: 0, growing: 1, empty: 2 };
+          state.land.sort((a, b) => (rank[a.status] - rank[b.status]) || String(a.cropId || '').localeCompare(String(b.cropId || '')));
+        } else if (zone === 'trees') {
+          state.trees.sort((a, b) => String(a.treeId).localeCompare(String(b.treeId)));
+        } else if (zone === 'animals') {
+          state.animals.sort((a, b) => String(a.animalId).localeCompare(String(b.animalId)));
+        } else if (zone === 'machines') {
+          state.machines.sort((a, b) => String(a.machineId).localeCompare(String(b.machineId)));
+        } else if (zone === 'decorations') {
+          state.decorations.sort((a, b) => String(a.decoId).localeCompare(String(b.decoId)));
+        }
+        SoundEngine.success();
+        showToast('تم ترتيب القسم تلقائياً حسب النوع ✨', 'success', '✨');
+        saveAndRender();
+      }
+
+      function applyFertilizer(plotId, anchorEl = null) {
+        const plot = state.land.find((p) => p.id === plotId);
+        if (!plot || plot.status !== 'growing') return;
+        if (getStock('magic_fertilizer') < 1) {
+          SoundEngine.error();
+          showToast('لا تملك سماداً سحرياً — اشترِه من المتجر (متفرقات)', 'error', '⚠️');
+          return;
+        }
+        removeStock('magic_fertilizer', 1);
+        const now = Date.now();
+        const rem = Math.max(2000, plot.endsAt - now);
+        plot.endsAt = now + Math.max(1000, Math.round(rem / 2));
+        SoundEngine.success();
+        spawnFloatingFX('✨ تسريع 50%!', 'text-amber-500', anchorEl);
+        checkTimersAndNotifications();
+        saveAndRender();
+      }
+
+      function applySuperFeed(animalInstId, anchorEl = null) {
+        const an = state.animals.find((a) => a.id === animalInstId);
+        if (!an || an.status !== 'producing' || an.boosted) return;
+        if (getStock('super_feed') < 1) {
+          SoundEngine.error();
+          showToast('لا تملك علفاً ممتازاً — اشترِه من المتجر (متفرقات)', 'error', '⚠️');
+          return;
+        }
+        removeStock('super_feed', 1);
+        an.boosted = true;
+        SoundEngine.success();
+        spawnFloatingFX('🌟 إنتاج 2×!', 'text-amber-500', anchorEl);
+        saveAndRender();
+      }
+
+      function upgradeMachine(machineInstId, anchorEl = null) {
+        const mc = state.machines.find((m) => m.id === machineInstId);
+        if (!mc) return;
+        const curLvl = mc.level || 1;
+        if (curLvl >= 3) return;
+        const cost = curLvl === 1 ? 150 : 300;
+        if (!adjustBalance(-cost, `ترقية الماكينة للمستوى ${curLvl + 1}`, anchorEl)) return;
+        mc.level = curLvl + 1;
+        SoundEngine.success();
+        grantXP(35, anchorEl);
+        saveAndRender();
+      }
+
+      function buildArrangeControlsHtml(zone, index, total) {
+        if (!arrangeMode) return '';
+        const cols = getGridColumns(`${zone}-grid`);
+        const canRight = index > 0;
+        const canLeft = index < total - 1;
+        const canUp = index - cols >= 0;
+        const canDown = index + cols < total;
+        return `
+          <div class="w-full mt-2 pt-2 border-t border-purple-200/80 flex items-center justify-center gap-1 bg-purple-50/90 rounded-xl p-1" data-no-bubble="1">
+            <button type="button" data-move-zone="${zone}" data-move-idx="${index}" data-move-dir="right" ${canRight ? '' : 'disabled'} title="تحريك يمين"
+              class="btn-press w-7 h-7 rounded-lg text-xs font-black flex items-center justify-center ${canRight ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">→</button>
+            <button type="button" data-move-zone="${zone}" data-move-idx="${index}" data-move-dir="up" ${canUp ? '' : 'disabled'} title="تحريك أعلى"
+              class="btn-press w-7 h-7 rounded-lg text-xs font-black flex items-center justify-center ${canUp ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">↑</button>
+            <button type="button" data-move-zone="${zone}" data-move-idx="${index}" data-move-dir="down" ${canDown ? '' : 'disabled'} title="تحريك أسفل"
+              class="btn-press w-7 h-7 rounded-lg text-xs font-black flex items-center justify-center ${canDown ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">↓</button>
+            <button type="button" data-move-zone="${zone}" data-move-idx="${index}" data-move-dir="left" ${canLeft ? '' : 'disabled'} title="تحريك يسار"
+              class="btn-press w-7 h-7 rounded-lg text-xs font-black flex items-center justify-center ${canLeft ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">←</button>
+          </div>`;
       }
 
       function spawnFloatingFX(text, colorClass = 'text-emerald-600', anchorEl = null) {
@@ -1593,7 +1940,7 @@
       function checkTimersAndNotifications() {
         if (!state) return;
         const now = Date.now();
-        let changed = false;
+        let changed = maybeRotateWeatherAndMarket(now);
 
         // 1. Land Crops
         state.land.forEach((plot) => {
@@ -1731,7 +2078,7 @@
         plot.status = 'growing';
         plot.cropId = crop.id;
         plot.startedAt = now;
-        plot.endsAt = now + getEffectiveDurationMs(crop.productionTime);
+        plot.endsAt = now + getEffectiveDurationMs(crop.productionTime, 'crop');
         plot.notified = false;
 
         SoundEngine.click();
@@ -1762,6 +2109,8 @@
 
         SoundEngine.sell();
         spawnFloatingFX(`+1 ${crop.icon} ${crop.name}`, 'text-amber-600', anchorEl);
+        grantXP(10, anchorEl);
+        advanceQuests('harvest', 1);
         checkTimersAndNotifications();
         saveAndRender();
       }
@@ -1784,6 +2133,8 @@
         });
         SoundEngine.success();
         showToast(`تم حصاد ${count} محاصيل وإضافتها للمخزن!`, 'success', '🌾');
+        grantXP(count * 10);
+        advanceQuests('harvest', count);
         checkTimersAndNotifications();
         saveAndRender();
       }
@@ -1799,11 +2150,13 @@
         const now = Date.now();
         tr.status = 'growing';
         tr.startedAt = now;
-        tr.endsAt = now + getEffectiveDurationMs(def.productionTime);
+        tr.endsAt = now + getEffectiveDurationMs(def.productionTime, 'tree');
         tr.notified = false;
 
         SoundEngine.sell();
         spawnFloatingFX(`+1 ${def.icon} ${def.outputName}`, 'text-emerald-600', anchorEl);
+        grantXP(15, anchorEl);
+        advanceQuests('harvest', 1);
         checkTimersAndNotifications();
         saveAndRender();
       }
@@ -1831,6 +2184,7 @@
 
         SoundEngine.animal(def.sound);
         spawnFloatingFX(`تم إطعام ${def.name}`, 'text-sky-600', anchorEl);
+        advanceQuests('feed', 1);
         saveAndRender();
       }
 
@@ -1840,14 +2194,17 @@
         const def = ANIMALS.find((a) => a.id === an.animalId);
         if (!def) return;
 
-        addStock(def.outputId, def.outputQty);
+        const finalQty = an.boosted ? def.outputQty * 2 : def.outputQty;
+        addStock(def.outputId, finalQty);
         an.status = 'hungry';
+        an.boosted = false;
         an.startedAt = null;
         an.endsAt = null;
         an.notified = false;
 
         SoundEngine.sell();
-        spawnFloatingFX(`+${def.outputQty} ${def.outputIcon} ${def.outputName}`, 'text-amber-600', anchorEl);
+        spawnFloatingFX(`+${finalQty} ${def.outputIcon} ${def.outputName}`, 'text-amber-600', anchorEl);
+        grantXP(15, anchorEl);
         checkTimersAndNotifications();
         saveAndRender();
       }
@@ -1875,11 +2232,13 @@
         rec.inputs.forEach((inp) => removeStock(inp.id, inp.qty * safeBatches));
 
         const now = Date.now();
+        const lvl = mc.level || 1;
+        const outputMult = lvl >= 3 ? 2 : 1;
         mc.status = 'producing';
         mc.recipeId = rec.id;
-        mc.batchOutputQty = rec.outputQty * safeBatches;
+        mc.batchOutputQty = rec.outputQty * safeBatches * outputMult;
         mc.startedAt = now;
-        mc.endsAt = now + getEffectiveDurationMs(rec.productionTime * safeBatches);
+        mc.endsAt = now + getEffectiveDurationMs(rec.productionTime * safeBatches, 'machine', lvl);
         mc.notified = false;
 
         SoundEngine.buy();
@@ -1906,6 +2265,8 @@
 
         SoundEngine.success();
         spawnFloatingFX(`+${qty} ${rec.icon} ${rec.name}`, 'text-purple-700', anchorEl);
+        grantXP(25, anchorEl);
+        advanceQuests('craft', 1);
         checkTimersAndNotifications();
         saveAndRender();
       }
@@ -2008,6 +2369,19 @@
           }
           SoundEngine.buy();
           saveAndRender();
+          return;
+        }
+        if (category === 'decorations') {
+          const def = DECORATIONS.find((d) => d.id === id);
+          if (!def) return;
+          const total = def.purchasePrice * count;
+          if (!adjustBalance(-total, `شراء ${def.name}`, anchorEl)) return;
+          for (let i = 0; i < count; i++) {
+            state.decorations.push({ id: makeId('deco'), decoId: def.id });
+          }
+          SoundEngine.buy();
+          grantXP(10, anchorEl);
+          saveAndRender();
         }
       }
 
@@ -2023,7 +2397,9 @@
           return;
         }
         removeStock(itemId, count);
-        const revenue = item.warehouseSellPrice * count;
+        const isHot = state.marketHotItem && state.marketHotItem.itemId === itemId;
+        const unitSell = isHot ? Math.round(item.warehouseSellPrice * 1.3) : item.warehouseSellPrice;
+        const revenue = unitSell * count;
         SoundEngine.sell();
         adjustBalance(revenue, `تم بيع ${count} × ${item.name} من المخزن`, anchorEl);
         checkTimersAndNotifications();
@@ -2052,8 +2428,13 @@
         cust.items.forEach((req) => removeStock(req.itemId, req.qty));
         state.completedOrders = (state.completedOrders || 0) + 1;
 
+        const w = getCurrentWeather();
+        const payout = w.customerBonus ? Math.round(cust.totalReward * (1 + w.customerBonus)) : cust.totalReward;
         SoundEngine.success();
-        adjustBalance(cust.totalReward, `تم تسليم طلب ${cust.name} بنجاح!`, anchorEl);
+        adjustBalance(payout, `تم تسليم طلب ${cust.name} بنجاح!`, anchorEl);
+        grantXP(cust.urgent ? 60 : 40, anchorEl);
+        advanceQuests('deliver', 1);
+        if (cust.urgent) advanceQuests('urgent', 1);
         pushNotification('🎉', `تم تسليم طلب ${cust.name} وحصلت على +${formatMoney(cust.totalReward)} جنيه.`);
 
         // Remove delivered customer & bring a fresh customer after a short moment
@@ -2180,12 +2561,54 @@
           notifBadge.classList.add('hidden');
         }
 
+        // Level badge & Quests badge & Arrange pill
+        const lvlEl = document.getElementById('hud-level-badge');
+        if (lvlEl) lvlEl.textContent = `⭐ م${state.level || 1} (${state.xp || 0}/${xpNeededForLevel(state.level || 1)})`;
+
+        const claimableQuests = (state.quests || []).filter((q) => q.progress >= q.target).length;
+        const qBadge = document.getElementById('hud-quests-badge');
+        if (qBadge) {
+          if (claimableQuests > 0) {
+            qBadge.textContent = claimableQuests;
+            qBadge.classList.remove('hidden');
+          } else {
+            qBadge.classList.add('hidden');
+          }
+        }
+
+        const arrPill = document.getElementById('arrange-mode-pill');
+        const arrBtn = document.getElementById('btn-toggle-arrange');
+        if (arrPill) {
+          arrPill.classList.toggle('hidden', !arrangeMode);
+          arrPill.classList.toggle('flex', arrangeMode);
+        }
+        if (arrBtn) {
+          arrBtn.className = arrangeMode
+            ? 'btn-press bg-purple-600 text-white border border-purple-700 px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow'
+            : 'btn-press bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1';
+        }
+        document.querySelectorAll('.arrange-only').forEach((el) => el.classList.toggle('hidden', !arrangeMode));
+
+        // Weather & Hot Market Item pills
+        const w = getCurrentWeather();
+        const wPill = document.getElementById('hud-weather-pill');
+        if (wPill) {
+          wPill.textContent = `${w.icon} ${w.name} • ${w.desc}`;
+        }
+        const hotPill = document.getElementById('hud-hot-pill');
+        if (hotPill && state.marketHotItem) {
+          const hit = ITEMS_BY_ID[state.marketHotItem.itemId];
+          if (hit) hotPill.textContent = `🔥 منتج اليوم: ${hit.icon} ${hit.name} (+30%)`;
+        }
+
         // Counts in zone bar
         document.getElementById('count-land').textContent = state.land.length;
         document.getElementById('count-trees').textContent = state.trees.length;
         document.getElementById('count-animals').textContent = state.animals.length;
         document.getElementById('count-machines').textContent = state.machines.length;
         document.getElementById('count-customers').textContent = state.customers.length;
+        const dcEl = document.getElementById('count-decorations');
+        if (dcEl) dcEl.textContent = (state.decorations || []).length;
 
         const mult = state.settings.timeMultiplier || 1;
         document.getElementById('hud-speed-label').textContent = mult === 1 ? '1x حقيقي' : `${mult}x تجريبي`;
@@ -2197,7 +2620,7 @@
       }
 
       function renderZoneVisibility() {
-        const zones = ['land', 'trees', 'animals', 'machines', 'customers'];
+        const zones = ['land', 'trees', 'animals', 'machines', 'customers', 'decorations'];
         zones.forEach((z) => {
           const el = document.getElementById(`zone-${z}`);
           if (!el) return;
@@ -2226,18 +2649,25 @@
         }
 
         const now = Date.now();
+        const hasFert = getStock('magic_fertilizer') > 0;
+        const total = state.land.length;
         grid.innerHTML = state.land
           .map((plot, index) => {
+            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="land" data-drag-idx="${index}"` : '';
+            const arrHtml = buildArrangeControlsHtml('land', index, total);
+            const ringCls = arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : '';
             if (plot.status === 'empty') {
               const activeSeed = activePlantingSeedId ? ITEMS_BY_ID[activePlantingSeedId] : null;
               return `
-                <button type="button" data-plot-action="plant" data-plot-id="${plot.id}"
-                  class="soil-plot btn-press rounded-2xl p-3 min-h-[122px] flex flex-col items-center justify-center text-center text-amber-50 transition relative">
-                  <span class="absolute top-1.5 right-2 text-[10px] font-bold text-amber-200/80">#${index + 1}</span>
-                  <span class="text-2xl mb-1 opacity-90">${activeSeed ? activeSeed.cropIcon : '🌱'}</span>
-                  <span class="text-xs font-extrabold">${activeSeed ? `ازرع ${activeSeed.name.replace('بذور ', '')}` : 'ازرع هنا'}</span>
-                  <span class="text-[10px] text-amber-200/90 mt-0.5">${activeSeed ? 'ضغطة سريعة' : 'اضغط لاختيار بذور'}</span>
-                </button>`;
+                <div ${dragAttrs} class="soil-plot rounded-2xl p-3 min-h-[122px] flex flex-col items-center justify-center text-center text-amber-50 transition relative ${ringCls}">
+                  <button type="button" ${arrangeMode ? 'disabled' : `data-plot-action="plant" data-plot-id="${plot.id}"`} class="btn-press w-full flex flex-col items-center justify-center">
+                    <span class="absolute top-1.5 right-2 text-[10px] font-bold text-amber-200/80">#${index + 1}</span>
+                    <span class="text-2xl mb-1 opacity-90">${activeSeed ? activeSeed.cropIcon : '🌱'}</span>
+                    <span class="text-xs font-extrabold">${activeSeed ? `ازرع ${activeSeed.name.replace('بذور ', '')}` : 'ازرع هنا'}</span>
+                    <span class="text-[10px] text-amber-200/90 mt-0.5">${arrangeMode ? 'وضع الترتيب' : activeSeed ? 'ضغطة سريعة' : 'اضغط لاختيار بذور'}</span>
+                  </button>
+                  ${arrHtml}
+                </div>`;
             }
             const crop = CROPS.find((c) => c.id === plot.cropId);
             if (plot.status === 'growing') {
@@ -2245,7 +2675,7 @@
               const pct = Math.min(100, Math.max(0, ((now - plot.startedAt) / Math.max(1, plot.endsAt - plot.startedAt)) * 100));
               const barId = `bar_${plot.id}`;
               return `
-                <div class="soil-plot rounded-2xl p-3 min-h-[122px] flex flex-col items-center justify-between text-center text-white relative">
+                <div ${dragAttrs} class="soil-plot rounded-2xl p-3 min-h-[122px] flex flex-col items-center justify-between text-center text-white relative ${ringCls}">
                   <span class="text-[11px] font-bold text-amber-100">${crop ? crop.name : ''}</span>
                   <span class="text-3xl anim-sway my-1">${crop ? crop.icon : '🌱'}</span>
                   <div class="w-full space-y-1">
@@ -2256,17 +2686,19 @@
                     <div class="w-full h-1.5 bg-black/30 rounded-full overflow-hidden">
                       <div id="${barId}" class="h-full bg-emerald-400 rounded-full transition-all duration-500" style="width:${pct.toFixed(1)}%"></div>
                     </div>
+                    ${!arrangeMode && hasFert ? `<button type="button" data-use-fertilizer="${plot.id}" class="btn-press w-full py-0.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[10px]">✨ سماد (-50%)</button>` : ''}
                   </div>
+                  ${arrHtml}
                 </div>`;
             }
             // ready
             return `
-              <button type="button" data-plot-action="harvest" data-plot-id="${plot.id}"
-                class="soil-plot ready-glow btn-press rounded-2xl p-3 min-h-[122px] flex flex-col items-center justify-between text-center text-white relative">
+              <div ${dragAttrs} class="soil-plot ready-glow rounded-2xl p-3 min-h-[122px] flex flex-col items-center justify-between text-center text-white relative ${ringCls}">
                 <span class="text-[11px] font-extrabold text-amber-200">${crop ? crop.name : ''}</span>
                 <span class="text-4xl anim-ready">${crop ? crop.icon : '🌾'}</span>
-                <span class="w-full py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs shadow">حصاد الآن</span>
-              </button>`;
+                <button type="button" ${arrangeMode ? 'disabled' : `data-plot-action="harvest" data-plot-id="${plot.id}"`} class="btn-press w-full py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs shadow">حصاد الآن</button>
+                ${arrHtml}
+              </div>`;
           })
           .join('');
       }
@@ -2278,28 +2710,33 @@
           return;
         }
         const now = Date.now();
+        const total = state.trees.length;
         grid.innerHTML = state.trees
-          .map((tr) => {
+          .map((tr, index) => {
             const def = TREES.find((t) => t.id === tr.treeId);
             if (!def) return '';
+            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="trees" data-drag-idx="${index}"` : '';
+            const arrHtml = buildArrangeControlsHtml('trees', index, total);
+            const ringCls = arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : '';
             if (tr.status === 'ready') {
               return `
-                <div class="bg-gradient-to-b from-emerald-50 to-amber-50 border-2 border-amber-400 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center shadow-sm">
+                <div ${dragAttrs} class="bg-gradient-to-b from-emerald-50 to-amber-50 border-2 border-amber-400 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center shadow-sm ${ringCls}">
                   <div class="text-xs font-black text-emerald-950">${def.name}</div>
                   <div class="relative my-2">
                     <span class="text-4xl anim-sway">${def.treeIcon}</span>
                     <span class="text-2xl absolute -bottom-1 -left-2 anim-ready">${def.icon}</span>
                   </div>
-                  <button type="button" data-tree-harvest="${tr.id}" class="btn-press w-full py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow">
+                  <button type="button" ${arrangeMode ? 'disabled' : `data-tree-harvest="${tr.id}"`} class="btn-press w-full py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow">
                     ${def.icon} حصاد ${def.outputName}
                   </button>
+                  ${arrHtml}
                 </div>`;
             }
             const remSec = Math.max(0, (tr.endsAt - now) / 1000);
             const pct = Math.min(100, Math.max(0, ((now - tr.startedAt) / Math.max(1, tr.endsAt - tr.startedAt)) * 100));
             const barId = `bar_${tr.id}`;
             return `
-              <div class="bg-white border border-emerald-200 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center shadow-sm">
+              <div ${dragAttrs} class="bg-white border border-emerald-200 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center shadow-sm ${ringCls}">
                 <div class="text-xs font-black text-slate-800">${def.name}</div>
                 <div class="relative my-2">
                   <span class="text-4xl anim-sway">${def.treeIcon}</span>
@@ -2314,6 +2751,7 @@
                     <div id="${barId}" class="h-full bg-emerald-500 rounded-full" style="width:${pct.toFixed(1)}%"></div>
                   </div>
                 </div>
+                ${arrHtml}
               </div>`;
           })
           .join('');
@@ -2326,8 +2764,10 @@
           return;
         }
         const now = Date.now();
+        const hasSuperFeed = getStock('super_feed') > 0;
+        const totalAnim = state.animals.length;
         grid.innerHTML = state.animals
-          .map((an) => {
+          .map((an, index) => {
             const def = ANIMALS.find((a) => a.id === an.animalId);
             if (!def) return '';
             const feedItem = ITEMS_BY_ID[def.feedId];
@@ -2366,12 +2806,13 @@
               const barId = `bar_${an.id}`;
               footerHtml = `
                 <div class="text-[11px] font-bold text-sky-700 mb-1 flex items-center justify-between">
-                  <span>✨ تم الإطعام — جاري الإنتاج</span>
+                  <span>${an.boosted ? '🌟 مضاعف 2× — جاري الإنتاج' : '✨ تم الإطعام — جاري الإنتاج'}</span>
                   <span class="font-black" data-timer-ends="${an.endsAt}" data-timer-started="${an.startedAt}" data-bar-id="${barId}">${formatDuration(remSec)}</span>
                 </div>
                 <div class="w-full h-2 bg-sky-100 rounded-full overflow-hidden">
                   <div id="${barId}" class="h-full bg-sky-500 rounded-full" style="width:${pct.toFixed(1)}%"></div>
-                </div>`;
+                </div>
+                ${!arrangeMode && !an.boosted && hasSuperFeed ? `<button type="button" data-use-superfeed="${an.id}" class="btn-press mt-1.5 w-full py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[11px]">🌟 استخدام علف ممتاز (2×)</button>` : ''}`;
             } else {
               footerHtml = `
                 <div class="text-[11px] font-extrabold text-amber-700 mb-1.5">✨ ${def.outputQty} × ${def.outputName} جاهز للجمع!</div>
@@ -2381,14 +2822,17 @@
                 </button>`;
             }
 
+            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="animals" data-drag-idx="${index}"` : '';
+            const arrHtml = buildArrangeControlsHtml('animals', index, totalAnim);
             return `
-              <div class="bg-white border-2 ${an.status === 'ready' ? 'border-amber-400 bg-amber-50/40' : 'border-slate-200'} rounded-2xl p-3.5 flex flex-col justify-between shadow-sm">
+              <div ${dragAttrs} class="bg-white border-2 ${an.status === 'ready' ? 'border-amber-400 bg-amber-50/40' : 'border-slate-200'} ${arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : ''} rounded-2xl p-3.5 flex flex-col justify-between shadow-sm">
                 <div class="flex items-center justify-between">
                   <span class="font-black text-sm text-slate-800">${def.name}</span>
                   <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">⏱️ ${formatMinutesLabel(def.productionTime)}</span>
                 </div>
                 ${visualHtml}
                 <div>${footerHtml}</div>
+                ${arrHtml}
               </div>`;
           })
           .join('');
@@ -2401,8 +2845,9 @@
           return;
         }
         const now = Date.now();
+        const totalMach = state.machines.length;
         grid.innerHTML = state.machines
-          .map((mc) => {
+          .map((mc, index) => {
             const def = MACHINES.find((m) => m.id === mc.machineId);
             if (!def) return '';
             const rec = mc.recipeId ? def.recipes.find((r) => r.id === mc.recipeId) : null;
@@ -2434,13 +2879,45 @@
                 </button>`;
             }
 
+            const lvl = mc.level || 1;
+            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="machines" data-drag-idx="${index}"` : '';
+            const arrHtml = buildArrangeControlsHtml('machines', index, totalMach);
             return `
-              <div class="bg-white border-2 ${mc.status === 'ready' ? 'border-amber-400 bg-amber-50/30' : 'border-purple-200'} rounded-2xl p-3.5 flex flex-col justify-between shadow-sm">
+              <div ${dragAttrs} class="bg-white border-2 ${mc.status === 'ready' ? 'border-amber-400 bg-amber-50/30' : 'border-purple-200'} ${arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : ''} rounded-2xl p-3.5 flex flex-col justify-between shadow-sm">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="font-black text-sm text-slate-800">${def.name}</span>
+                  <div>
+                    <span class="font-black text-sm text-slate-800">${def.name}</span>
+                    <span class="mr-1 text-[10px] font-black px-1.5 py-0.5 rounded-md ${lvl >= 3 ? 'bg-amber-400 text-amber-950' : lvl === 2 ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-600'}">م${lvl}${lvl >= 3 ? ' (2×)' : ''}</span>
+                  </div>
                   <span class="text-2xl ${mc.status === 'producing' ? 'anim-machine' : ''}">${def.icon}</span>
                 </div>
                 ${statusHtml}
+                ${arrHtml}
+              </div>`;
+          })
+          .join('');
+      }
+
+      function renderDecorations() {
+        const grid = document.getElementById('decorations-grid');
+        if (!grid) return;
+        const list = state.decorations || [];
+        if (!list.length) {
+          grid.innerHTML = `<div class="col-span-full text-center py-6 bg-pink-50/70 rounded-2xl border border-dashed border-pink-300 text-sm text-pink-900 font-bold">لم تشترِ ديكورات بعد — زيّن مزرعتك من المتجر (قسم ديكورات) 🎨</div>`;
+          return;
+        }
+        const total = list.length;
+        grid.innerHTML = list
+          .map((d, index) => {
+            const def = DECORATIONS.find((x) => x.id === d.decoId);
+            if (!def) return '';
+            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="decorations" data-drag-idx="${index}"` : '';
+            const arrHtml = buildArrangeControlsHtml('decorations', index, total);
+            return `
+              <div ${dragAttrs} class="bg-gradient-to-b from-pink-50/70 to-white border-2 ${arrangeMode ? 'border-purple-400 ring-2 ring-purple-300 cursor-grab' : 'border-pink-200'} rounded-2xl p-3 flex flex-col items-center justify-between text-center shadow-sm">
+                <span class="text-4xl my-1 anim-sway">${def.icon}</span>
+                <span class="text-xs font-black text-slate-800">${def.name}</span>
+                ${arrHtml}
               </div>`;
           })
           .join('');
@@ -2523,6 +3000,7 @@
         renderAnimals();
         renderMachines();
         renderCustomersZone();
+        renderDecorations();
         if (activeModal) renderModalContent();
         if (window.lucide) lucide.createIcons();
       }
@@ -2592,6 +3070,11 @@
           titleEl.textContent = 'مركز الإشعارات';
           subEl.textContent = 'آخر أحداث المزرعة وطلبات العملاء';
           bodyEl.innerHTML = buildNotificationsHtml();
+        } else if (activeModal === 'quests') {
+          iconEl.textContent = '🏆';
+          titleEl.textContent = 'المهام اليومية والمستوى';
+          subEl.textContent = `المستوى ${state.level || 1} • الخبرة: ${state.xp || 0} / ${xpNeededForLevel(state.level || 1)}`;
+          bodyEl.innerHTML = buildQuestsHtml();
         } else if (activeModal === 'settings') {
           iconEl.textContent = '⚙️';
           titleEl.textContent = 'إعدادات اللعبة';
@@ -2608,6 +3091,7 @@
           { id: 'machines', label: '🏭 الماكينات' },
           { id: 'land', label: '🌾 الأراضي' },
           { id: 'misc', label: '🪱 متفرقات' },
+          { id: 'decorations', label: '🎨 ديكورات' },
         ];
 
         const tabsHtml = `
@@ -2788,6 +3272,29 @@
           }).join('');
         }
 
+        if (activeShopTab === 'decorations') {
+          cardsHtml = DECORATIONS.map((d) => {
+            const owned = (state.decorations || []).filter((x) => x.decoId === d.id).length;
+            return `
+              <div class="bg-white rounded-2xl p-3.5 border border-pink-200 shadow-sm flex flex-col justify-between gap-2.5">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <span class="text-4xl">${d.icon}</span>
+                    <div>
+                      <div class="font-black text-sm text-slate-900">${d.name}</div>
+                      <div class="text-[11px] text-slate-500 font-bold">تملك: ${owned}</div>
+                    </div>
+                  </div>
+                  <span class="text-xs font-black bg-pink-100 text-pink-900 px-2 py-0.5 rounded-lg">${d.purchasePrice} ج</span>
+                </div>
+                <p class="text-[11px] text-slate-600">${d.desc}</p>
+                <button type="button" data-shop-buy="decorations" data-item-id="${d.id}" ${state.balance < d.purchasePrice ? 'disabled' : ''}
+                  class="btn-press w-full py-2 rounded-xl text-xs font-black ${state.balance >= d.purchasePrice ? 'bg-pink-600 hover:bg-pink-700 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                  شراء ديكور (${d.purchasePrice} جنيه)
+                </button>
+              </div>`;
+          }).join('');
+        }
         return `${tabsHtml}<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">${cardsHtml}</div>`;
       }
 
@@ -2898,9 +3405,70 @@
           </div>`;
       }
 
+      function buildQuestsHtml() {
+        const xpNeed = xpNeededForLevel(state.level || 1);
+        const xpPct = Math.min(100, Math.round(((state.xp || 0) / xpNeed) * 100));
+        const quests = state.quests || [];
+        return `
+          <div class="space-y-4">
+            <div class="bg-gradient-to-l from-amber-50 to-emerald-50 rounded-2xl p-4 border border-amber-200 space-y-2">
+              <div class="flex items-center justify-between text-sm font-black text-slate-900">
+                <span>⭐ المستوى الحالي: ${state.level || 1}</span>
+                <span class="text-xs text-amber-800">${state.xp || 0} / ${xpNeed} XP</span>
+              </div>
+              <div class="w-full h-2.5 bg-white rounded-full overflow-hidden border border-amber-200">
+                <div class="h-full bg-amber-500 rounded-full transition-all" style="width:${xpPct}%"></div>
+              </div>
+            </div>
+            <div class="space-y-2.5">
+              ${quests
+                .map((q) => {
+                  const done = q.progress >= q.target;
+                  const pct = Math.min(100, Math.round((q.progress / Math.max(1, q.target)) * 100));
+                  return `
+                    <div class="bg-white rounded-2xl p-4 border-2 ${done ? 'border-emerald-400 bg-emerald-50/30' : 'border-slate-200'} shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div class="flex items-center gap-3 flex-1 w-full">
+                        <span class="text-3xl">${q.icon}</span>
+                        <div class="flex-1">
+                          <div class="font-black text-sm text-slate-900">${q.title}</div>
+                          <div class="text-xs text-slate-500 font-bold mt-0.5">المكافأة: 💰 ${formatMoney(q.rewardMoney)} جنيه • ⭐ +${q.rewardXp} XP</div>
+                          <div class="mt-1.5 flex items-center gap-2">
+                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                              <div class="h-full ${done ? 'bg-emerald-500' : 'bg-indigo-500'} rounded-full" style="width:${pct}%"></div>
+                            </div>
+                            <span class="text-xs font-black text-slate-700">${q.progress}/${q.target}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <button type="button" data-claim-quest="${q.id}" ${done ? '' : 'disabled'}
+                        class="btn-press shrink-0 px-4 py-2 rounded-xl text-xs font-black ${done ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                        ${done ? '🎁 استلام المكافأة' : 'قيد التنفيذ'}
+                      </button>
+                    </div>`;
+                })
+                .join('')}
+            </div>
+          </div>`;
+      }
+
       function buildMachineModalHtml(mc, def) {
         if (!mc || !def) return '';
+        const lvl = mc.level || 1;
+        const nextCost = lvl === 1 ? 150 : 300;
+        const upgradeBanner = lvl < 3
+          ? `<div class="mb-4 bg-purple-50 rounded-2xl p-3.5 border border-purple-200 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div class="font-black text-sm text-purple-950">⬆️ ترقية الماكينة إلى المستوى ${lvl + 1}</div>
+                <div class="text-xs text-purple-800">${lvl === 1 ? 'سرعة تصنيع أعلى بنسبة +25%' : 'سرعة تصنيع +45% + إنتاج مضاعف (2×) في كل مرة!'}</div>
+              </div>
+              <button type="button" data-upgrade-machine="${mc.id}" ${state.balance < nextCost ? 'disabled' : ''}
+                class="btn-press px-4 py-2 rounded-xl text-xs font-black ${state.balance >= nextCost ? 'bg-purple-600 hover:bg-purple-700 text-white shadow' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                ترقية (${nextCost} جنيه)
+              </button>
+            </div>`
+          : `<div class="mb-4 bg-amber-50 rounded-2xl p-3 border border-amber-300 text-xs font-black text-amber-900">⭐⭐ هذه الماكينة في أعلى مستوى (المستوى 3 — سرعة +45% وإنتاج مضاعف 2×)!</div>`;
         return `
+          ${upgradeBanner}
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             ${def.recipes
               .map((rec) => {
@@ -3039,7 +3607,8 @@
          10. AUTH FLOW & BOOTSTRAP
          ===================================================================== */
       function enterGame(accountState) {
-        state = accountState;
+        state = migrateAccountState(accountState);
+        arrangeMode = false;
         Storage.saveAccount(state);
         Storage.setActiveSession(state.name);
         SoundEngine.enabled = state.settings ? state.settings.soundEnabled !== false : true;
@@ -3154,6 +3723,48 @@
         document.getElementById('btn-open-shop').addEventListener('click', () => openModal('shop'));
         document.getElementById('btn-open-warehouse').addEventListener('click', () => openModal('warehouse'));
         document.getElementById('btn-open-customers').addEventListener('click', () => openModal('customers'));
+        document.getElementById('btn-open-quests').addEventListener('click', () => openModal('quests'));
+        document.getElementById('btn-toggle-arrange').addEventListener('click', () => {
+          arrangeMode = !arrangeMode;
+          if (arrangeMode) setContinuousPlanting(null);
+          SoundEngine.click();
+          renderGame();
+          showToast(arrangeMode ? 'وضع الترتيب نشط — استخدم الأسهم أو اسحب العناصر 🔀' : 'تم حفظ الترتيب والعودة للعب', 'info', '🔀');
+        });
+        document.getElementById('btn-exit-arrange').addEventListener('click', () => {
+          arrangeMode = false;
+          SoundEngine.click();
+          renderGame();
+          showToast('تم حفظ الترتيب والعودة للعب', 'success', '✅');
+        });
+
+        // HTML5 Drag & Drop Reordering in Arrange Mode
+        document.addEventListener('dragstart', (ev) => {
+          if (!arrangeMode) return;
+          const card = ev.target.closest('[data-drag-zone]');
+          if (!card) return;
+          dragSource = { zone: card.getAttribute('data-drag-zone'), idx: Number(card.getAttribute('data-drag-idx')) };
+          ev.dataTransfer.effectAllowed = 'move';
+        });
+        document.addEventListener('dragover', (ev) => {
+          if (!arrangeMode || !dragSource) return;
+          const card = ev.target.closest('[data-drag-zone]');
+          if (card && card.getAttribute('data-drag-zone') === dragSource.zone) {
+            ev.preventDefault();
+          }
+        });
+        document.addEventListener('drop', (ev) => {
+          if (!arrangeMode || !dragSource) return;
+          const card = ev.target.closest('[data-drag-zone]');
+          if (!card) return;
+          const zone = card.getAttribute('data-drag-zone');
+          const toIdx = Number(card.getAttribute('data-drag-idx'));
+          if (zone === dragSource.zone && toIdx !== dragSource.idx) {
+            ev.preventDefault();
+            swapFarmItems(zone, dragSource.idx, toIdx);
+          }
+          dragSource = null;
+        });
         document.getElementById('btn-open-notifications').addEventListener('click', () => openModal('notifications'));
         document.getElementById('btn-open-settings').addEventListener('click', () => openModal('settings'));
         document.getElementById('btn-toggle-fullscreen').addEventListener('click', () => {
@@ -3240,6 +3851,38 @@
         // Global Delegated Clicks inside Game & Modals
         document.addEventListener('click', (e) => {
           if (!state) return;
+
+          // Arrange Mode 4-way Move Buttons
+          const moveBtn = e.target.closest('[data-move-zone]');
+          if (moveBtn) {
+            moveFarmItem(moveBtn.getAttribute('data-move-zone'), Number(moveBtn.getAttribute('data-move-idx')), moveBtn.getAttribute('data-move-dir'));
+            return;
+          }
+          const sortBtn = e.target.closest('[data-auto-sort]');
+          if (sortBtn) {
+            autoSortZone(sortBtn.getAttribute('data-auto-sort'));
+            return;
+          }
+          const fertBtn = e.target.closest('[data-use-fertilizer]');
+          if (fertBtn) {
+            applyFertilizer(fertBtn.getAttribute('data-use-fertilizer'), fertBtn);
+            return;
+          }
+          const sfBtn = e.target.closest('[data-use-superfeed]');
+          if (sfBtn) {
+            applySuperFeed(sfBtn.getAttribute('data-use-superfeed'), sfBtn);
+            return;
+          }
+          const upgBtn = e.target.closest('[data-upgrade-machine]');
+          if (upgBtn) {
+            upgradeMachine(upgBtn.getAttribute('data-upgrade-machine'), upgBtn);
+            return;
+          }
+          const claimBtn = e.target.closest('[data-claim-quest]');
+          if (claimBtn) {
+            claimQuest(claimBtn.getAttribute('data-claim-quest'), claimBtn);
+            return;
+          }
 
           // Zone Jump Tabs
           const zoneBtn = e.target.closest('[data-zone-jump]');
