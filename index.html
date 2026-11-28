@@ -487,6 +487,9 @@
           </div>
           <div class="flex items-center gap-2 flex-wrap">
             <button data-auto-sort="land" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button>
+            <button id="btn-plant-all-crops" type="button" class="btn-press hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">
+              🌱 ازرع الكل
+            </button>
             <button id="btn-harvest-all-crops" type="button" class="btn-press hidden bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">
               🌾 حصاد كل الجاهز
             </button>
@@ -526,7 +529,7 @@
               <p class="text-xs text-slate-500">اضغط لإطعام الحيوان ثم اجمع إنتاجه • بركة السمك تضم 5 سمكات وتنتج 3 سمكات بالمرة</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 flex-wrap"><button id="btn-collect-all-animals" type="button" class="hidden btn-press bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">🥛 جمع كل المنتجات</button><button id="btn-feed-all-animals" type="button" class="hidden btn-press bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">🍽️ إطعام الكل</button><button data-auto-sort="animals" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="animals" type="button" class="btn-press bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="animals" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="animals" type="button" class="btn-press bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء حيوان أو بركة سمك
           </button></div>
         </div>
@@ -1857,6 +1860,7 @@
       let shopQuantities = {};
       let warehouseSellQuantities = {};
       let selectedPlotIdForPicker = null;
+      let seedPickerPlantAll = false;
       let selectedMachineInstanceId = null;
       let tickInterval = null;
       let lastBalanceShown = null;
@@ -2800,6 +2804,50 @@
         saveAndRender();
       }
 
+      function plantAllEmptyPlots(seedId, anchorEl = null) {
+        const seedItem = ITEMS_BY_ID[seedId];
+        if (!seedItem || seedItem.category !== 'seeds' || !seedItem.cropId) return;
+        const crop = CROPS.find((c) => c.id === seedItem.cropId);
+        if (!crop) return;
+
+        const fieldArr = getActiveLandArray();
+        const isField2 = activeField === 'land2' && state.land2Unlocked;
+        const emptyPlots = fieldArr.filter((p) => p.status === 'empty');
+        if (!emptyPlots.length) {
+          showToast('لا توجد أراضٍ فارغة للزراعة في هذا الحقل!', 'info', '🌱');
+          return;
+        }
+        const available = getStock(seedId);
+        if (available < 1) {
+          SoundEngine.error();
+          showToast('لا توجد بذور كافية في المخزن!', 'error', '⚠️');
+          return;
+        }
+
+        const toPlant = emptyPlots.slice(0, available);
+        const now = Date.now();
+        removeStock(seedId, toPlant.length);
+        toPlant.forEach((plot) => {
+          plot.status = 'growing';
+          plot.cropId = crop.id;
+          plot.startedAt = now;
+          const baseMs = getEffectiveDurationMs(crop.productionTime, 'crop', plot.level || 1);
+          plot.endsAt = now + (isField2 ? Math.max(2000, Math.round(baseMs / 1.15)) : baseMs);
+          plot.notified = false;
+        });
+
+        SoundEngine.success();
+        spawnFloatingFX(`🌱 تمت زراعة ${toPlant.length} ${crop.icon}`, 'text-emerald-700', anchorEl);
+        showToast(`تمت زراعة ${toPlant.length} قطعة أرض بـ ${crop.name}!`, 'success', crop.icon);
+
+        if (getStock(seedId) > 0) {
+          setContinuousPlanting(seedId);
+        } else {
+          setContinuousPlanting(null);
+        }
+        saveAndRender();
+      }
+
       function harvestCropPlot(plotId, anchorEl = null) {
         const found = findPlotAcrossFields(plotId);
         const plot = found ? found.plot : null;
@@ -2846,57 +2894,6 @@
         advanceQuests('harvest', ready.length);
         showToast(`تم حصاد ${ready.length} شجرة (+${totalYield} ثمرة)!`, 'success', '🌳');
         checkTimersAndNotifications();
-        saveAndRender();
-      }
-
-      function collectAllReadyAnimals() {
-        const ready = state.animals.filter((a) => a.status === 'ready');
-        if (!ready.length) return;
-        let count = 0;
-        ready.forEach((an) => {
-          const def = ANIMALS.find((a) => a.id === an.animalId);
-          if (!def) return;
-          const lvlMult = (an.level || 1) >= 3 ? 2 : 1;
-          const finalQty = def.outputQty * lvlMult * (an.boosted ? 2 : 1);
-          addStock(def.outputId, finalQty);
-          an.status = 'hungry';
-          an.boosted = false;
-          an.startedAt = null;
-          an.endsAt = null;
-          an.notified = false;
-          count++;
-        });
-        SoundEngine.success();
-        grantXP(count * 15);
-        showToast(`تم جمع منتجات ${count} حيوانات!`, 'success', '🥛');
-        checkTimersAndNotifications();
-        saveAndRender();
-      }
-
-      function feedAllHungryAnimals() {
-        const now = Date.now();
-        let fed = 0;
-        state.animals.forEach((an) => {
-          if (an.status !== 'hungry') return;
-          const def = ANIMALS.find((a) => a.id === an.animalId);
-          if (!def) return;
-          if (getStock(def.feedId) < 1) return;
-          removeStock(def.feedId, 1);
-          an.status = 'producing';
-          an.startedAt = now;
-          an.endsAt = now + getEffectiveDurationMs(def.productionTime, 'animal', an.level || 1);
-          an.notified = false;
-          fed++;
-        });
-        if (!fed) {
-          SoundEngine.error();
-          showToast('لا يوجد طعام كافٍ في المخزن للحيوانات الجائعة!', 'error', '⚠️');
-          return;
-        }
-        SoundEngine.success();
-        if (state.stats) state.stats.feeds = (state.stats.feeds || 0) + fed;
-        advanceQuests('feed', fed);
-        showToast(`تم إطعام ${fed} حيوانات بنجاح!`, 'success', '🍽️');
         saveAndRender();
       }
 
@@ -3521,6 +3518,19 @@
               </button>`;
           }
         }
+        const plantAllBtn = document.getElementById('btn-plant-all-crops');
+        const emptyCount = curFieldArr.filter((p) => p.status === 'empty').length;
+        if (plantAllBtn) {
+          if (emptyCount > 0 && !arrangeMode) {
+            plantAllBtn.classList.remove('hidden');
+            const activeSeed = activePlantingSeedId ? ITEMS_BY_ID[activePlantingSeedId] : null;
+            plantAllBtn.textContent = activeSeed
+              ? `🌱 ازرع الكل (${activeSeed.name.replace('بذور ', '')})`
+              : `🌱 ازرع الكل (${emptyCount})`;
+          } else {
+            plantAllBtn.classList.add('hidden');
+          }
+        }
         const harvestAllBtn = document.getElementById('btn-harvest-all-crops');
         const readyCount = curFieldArr.filter((p) => p.status === 'ready').length;
         if (readyCount > 0) {
@@ -3663,22 +3673,7 @@
 
       function renderAnimals() {
         const grid = document.getElementById('animals-grid');
-        const btnColAll = document.getElementById('btn-collect-all-animals');
-        if (btnColAll) {
-          const rCount = state.animals.filter((a) => a.status === 'ready').length;
-          btnColAll.classList.toggle('hidden', rCount === 0);
-          btnColAll.textContent = `🥛 جمع الكل (${rCount})`;
-        }
-        const btnFeedAll = document.getElementById('btn-feed-all-animals');
-        if (btnFeedAll) {
-          const feedableCount = state.animals.filter((a) => {
-            if (a.status !== 'hungry') return false;
-            const d = ANIMALS.find((x) => x.id === a.animalId);
-            return d && getStock(d.feedId) >= 1;
-          }).length;
-          btnFeedAll.classList.toggle('hidden', feedableCount === 0);
-          btnFeedAll.textContent = `🍽️ إطعام الكل (${feedableCount})`;
-        }
+
         if (!state.animals.length) {
           grid.innerHTML = `<div class="col-span-full text-center py-8 bg-sky-50/70 rounded-2xl border border-dashed border-sky-300 text-sm text-sky-900 font-bold">الحظيرة فارغة — اشترِ حيوانات أو بركة سمك من المتجر 🐄🐟</div>`;
           return;
@@ -4020,6 +4015,7 @@
         if (opts.shopTab) activeShopTab = opts.shopTab;
         if (opts.warehouseTab) activeWarehouseTab = opts.warehouseTab;
         if (opts.plotId) selectedPlotIdForPicker = opts.plotId;
+        seedPickerPlantAll = Boolean(opts.plantAll);
         if (opts.machineId) selectedMachineInstanceId = opts.machineId;
         if (type === 'notifications' && state) {
           state.notifications.forEach((n) => { n.read = true; });
@@ -4062,8 +4058,10 @@
           bodyEl.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">${buildCustomerCardsHtml()}</div>`;
         } else if (activeModal === 'seedPicker') {
           iconEl.textContent = '🌱';
-          titleEl.textContent = 'اختر البذور للزراعة';
-          subEl.textContent = 'سيظل هذا النوع نشطاً للزراعة المستمرة حتى ينفد أو تضغط «خروج» بجانب الرصيد';
+          titleEl.textContent = seedPickerPlantAll ? 'اختر البذور لزراعة كل الأراضي الفارغة' : 'اختر البذور للزراعة';
+          subEl.textContent = seedPickerPlantAll
+            ? 'سيتم توزيع البذور المختارة فوراً على جميع الأراضي الفارغة في الحقل النشط حسب الكمية المتوفرة'
+            : 'سيظل هذا النوع نشطاً للزراعة المستمرة حتى ينفد أو تضغط «خروج» بجانب الرصيد';
           bodyEl.innerHTML = buildSeedPickerHtml();
         } else if (activeModal === 'machineModal') {
           const mc = state.machines.find((m) => m.id === selectedMachineInstanceId);
@@ -5069,10 +5067,15 @@
 
         // Quick Farm Zone Actions
         document.getElementById('btn-quick-buy-land').addEventListener('click', (e) => buyFromShop('land', 'land', 1, e.currentTarget));
+        document.getElementById('btn-plant-all-crops').addEventListener('click', (e) => {
+          if (activePlantingSeedId && getStock(activePlantingSeedId) > 0) {
+            plantAllEmptyPlots(activePlantingSeedId, e.currentTarget);
+          } else {
+            openModal('seedPicker', { plantAll: true });
+          }
+        });
         document.getElementById('btn-harvest-all-crops').addEventListener('click', harvestAllReadyCrops);
         document.getElementById('btn-harvest-all-trees').addEventListener('click', harvestAllReadyTrees);
-        document.getElementById('btn-collect-all-animals').addEventListener('click', collectAllReadyAnimals);
-        document.getElementById('btn-feed-all-animals').addEventListener('click', feedAllHungryAnimals);
         document.getElementById('btn-collect-all-machines').addEventListener('click', collectAllReadyMachines);
 
         // Live Numeric Quantity Input in Shop (updates total price smoothly without losing focus!)
@@ -5271,9 +5274,12 @@
           const pickSeedBtn = e.target.closest('[data-pick-seed]');
           if (pickSeedBtn) {
             const seedId = pickSeedBtn.getAttribute('data-pick-seed');
+            const isPlantAll = seedPickerPlantAll;
             const plotId = selectedPlotIdForPicker;
+            seedPickerPlantAll = false;
             closeModal();
-            if (plotId) plantCropOnPlot(plotId, seedId);
+            if (isPlantAll) plantAllEmptyPlots(seedId);
+            else if (plotId) plantCropOnPlot(plotId, seedId);
             return;
           }
 
