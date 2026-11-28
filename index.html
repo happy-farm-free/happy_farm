@@ -186,8 +186,29 @@
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }
 
+    button, .btn-press {
+      touch-action: manipulation;
+    }
     .btn-press {
-      transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+      transition: transform 0.1s ease, background-color 0.12s ease;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    @media (max-width: 768px) {
+      header, .farm-zone-card {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+      .farm-zone-card {
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      }
+      body.night-mode .farm-zone-card {
+        background: #1e293b !important;
+      }
+      .anim-sway, .anim-walk, .anim-graze {
+        animation-duration: 4s;
+      }
     }
     .btn-press:active:not(:disabled) {
       transform: scale(0.96);
@@ -199,7 +220,7 @@
   <div id="floating-layer" aria-hidden="true"></div>
 
   <!-- Toast Container -->
-  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-[90] flex flex-col gap-2 w-[92%] max-w-md pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-2.5 left-1/2 -translate-x-1/2 z-[90] flex flex-col items-center gap-1.5 w-[90%] max-w-xs sm:max-w-sm pointer-events-none"></div>
 
   <!-- ===================== AUTH / WELCOME SCREEN ===================== -->
   <section id="auth-screen" class="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
@@ -234,7 +255,7 @@
         <form id="auth-form" class="space-y-4">
           <div>
             <label for="auth-username" class="block text-sm font-bold text-slate-700 mb-1.5" id="auth-label">
-              اسم المزارع (حساب جديد برصيد 8,000 جنيه)
+              اسم المزارع (حساب جديد برصيد 3,000 جنيه)
             </label>
             <input
               id="auth-username"
@@ -253,7 +274,7 @@
             class="btn-press w-full py-3.5 rounded-2xl bg-gradient-to-l from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-extrabold text-base shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2"
           >
             <i data-lucide="sprout" class="w-5 h-5"></i>
-            <span id="auth-submit-text">ابدأ مزرعتك الآن (8,000 جنيه)</span>
+            <span id="auth-submit-text">ابدأ مزرعتك الآن (3,000 جنيه)</span>
           </button>
         </form>
 
@@ -266,11 +287,15 @@
           <div id="saved-accounts-list" class="flex flex-wrap gap-2"></div>
         </div>
 
-        <!-- Backup Import on Auth Screen -->
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-center">
+        <!-- Backup Import & Quick Sync Code on Auth Screen -->
+        <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-center gap-2">
+          <button id="btn-auth-paste-code" type="button" class="btn-press text-xs font-extrabold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <span>📋</span>
+            <span>استعادة بكود النقل السريع</span>
+          </button>
           <button id="btn-auth-import-backup" type="button" class="btn-press text-xs font-bold text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-            <span>استعادة حساب من ملف نسخة احتياطية</span>
+            <span>استعادة من ملف</span>
           </button>
           <input id="input-import-backup" type="file" accept=".json,application/json" class="hidden" />
         </div>
@@ -293,7 +318,7 @@
 
           <div id="hud-balance-box" class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-300 px-3 py-1.5 rounded-xl shadow-sm">
             <span class="text-lg">💰</span>
-            <span id="hud-balance" class="font-black text-amber-900 text-sm sm:text-base">8,000</span>
+            <span id="hud-balance" class="font-black text-amber-900 text-sm sm:text-base">3,000</span>
             <span class="text-xs font-bold text-amber-700">جنيه</span>
           </div>
 
@@ -320,24 +345,24 @@
 
         <!-- Left side: Action Controls -->
         <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-          <button id="btn-open-shop" type="button" class="btn-press bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm">
+          <button id="btn-open-shop" type="button" class="hidden md:flex btn-press bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm">
             <i data-lucide="store" class="w-4 h-4"></i>
             <span>المتجر</span>
           </button>
 
-          <button id="btn-open-warehouse" type="button" class="btn-press bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
+          <button id="btn-open-warehouse" type="button" class="hidden md:flex btn-press bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
             <i data-lucide="warehouse" class="w-4 h-4"></i>
             <span>المخزن</span>
             <span id="hud-warehouse-badge" class="bg-white text-amber-800 text-[11px] font-black px-1.5 py-0.2 rounded-full">0</span>
           </button>
 
-          <button id="btn-open-customers" type="button" class="btn-press bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
+          <button id="btn-open-customers" type="button" class="hidden md:flex btn-press bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
             <i data-lucide="users" class="w-4 h-4"></i>
             <span>العملاء</span>
             <span id="hud-customers-badge" class="bg-white text-indigo-800 text-[11px] font-black px-1.5 rounded-full">0</span>
           </button>
 
-          <button id="btn-open-quests" type="button" class="btn-press bg-rose-500 hover:bg-rose-600 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
+          <button id="btn-open-quests" type="button" class="hidden md:flex btn-press bg-rose-500 hover:bg-rose-600 text-white px-3 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm relative">
             <span>🏆</span>
             <span class="hidden sm:inline">المهام</span>
             <span id="hud-quests-badge" class="hidden bg-white text-rose-700 text-[11px] font-black px-1.5 rounded-full">0</span>
@@ -348,9 +373,19 @@
             <span class="hidden sm:inline">ترتيب</span>
           </button>
 
-          <button id="btn-hire-helper" type="button" title="استئجار عامل المزرعة لمدة 20 دقيقة (500 جنيه)" class="btn-press bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-sm">
+          <button id="btn-open-combo" type="button" title="مطبخ الوجبات الفاخرة والكومبو" class="btn-press bg-orange-500 hover:bg-orange-600 text-white px-2.5 sm:px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-sm">
+            <span>🍽️</span>
+            <span class="hidden sm:inline">الكومبو</span>
+          </button>
+
+          <button id="btn-open-bank" type="button" title="بنك المزرعة والبورصة الزراعية (كل 12 ساعة)" class="btn-press bg-sky-600 hover:bg-sky-700 text-white px-2.5 sm:px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-sm">
+            <span>🏦</span>
+            <span class="hidden sm:inline">البنك</span>
+          </button>
+
+          <button id="btn-hire-helper" type="button" title="استئجار عامل المزرعة لمدة 20 دقيقة (1000 جنيه)" class="btn-press bg-teal-600 hover:bg-teal-700 text-white px-2.5 sm:px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-sm">
             <span>👷</span>
-            <span id="hud-helper-label">العامل (500ج)</span>
+            <span id="hud-helper-label">العامل (1000ج)</span>
           </button>
 
           <button id="btn-open-analytics" type="button" title="الإحصائيات والأوسمة" class="btn-press bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl border border-slate-200 text-sm">
@@ -387,7 +422,7 @@
 
       <!-- Zone Quick Navigation Bar -->
       <div class="bg-emerald-50/80 border-t border-emerald-100">
-        <div class="max-w-7xl mx-auto px-3 sm:px-5 py-1.5 flex items-center gap-2 overflow-x-auto text-xs font-bold">
+        <div class="max-w-7xl mx-auto px-3 sm:px-5 py-1.5 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-bold">
           <button data-zone-jump="all" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-emerald-600 text-white">🏡 كل المزرعة</button>
           <button data-zone-jump="land" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100">🌾 الأراضي (<span id="count-land">0</span>)</button>
           <button data-zone-jump="trees" type="button" class="zone-tab btn-press shrink-0 px-3 py-1 rounded-lg bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100">🌳 الأشجار (<span id="count-trees">0</span>)</button>
@@ -407,7 +442,7 @@
     </header>
 
     <!-- Main Farm Canvas Area -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-5 py-5 space-y-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-5 py-4 pb-24 md:pb-6 space-y-5">
       <!-- Quick Status Strip -->
       <div id="farm-quick-banner" class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div class="bg-white/90 rounded-2xl p-3 border border-emerald-100 shadow-sm flex items-center gap-3">
@@ -460,6 +495,7 @@
             </button>
           </div>
         </div>
+        <div id="field-switcher-bar" class="mb-3 flex flex-wrap items-center justify-between gap-2 bg-emerald-50/80 border border-emerald-200 rounded-2xl p-2"></div>
         <div id="land-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
       </section>
 
@@ -473,7 +509,7 @@
               <p class="text-xs text-slate-500">تُشترى مرة واحدة وتنتج تلقائياً باستمرار بعد كل حصاد</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="trees" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="trees" type="button" class="btn-press bg-green-100 hover:bg-green-200 text-green-900 border border-green-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button id="btn-harvest-all-trees" type="button" class="hidden btn-press bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">🌳 حصاد كل الأشجار</button><button data-auto-sort="trees" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="trees" type="button" class="btn-press bg-green-100 hover:bg-green-200 text-green-900 border border-green-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء شجرة من المتجر
           </button></div>
         </div>
@@ -490,7 +526,7 @@
               <p class="text-xs text-slate-500">اضغط لإطعام الحيوان ثم اجمع إنتاجه • بركة السمك تضم 5 سمكات وتنتج 3 سمكات بالمرة</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="animals" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="animals" type="button" class="btn-press bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button id="btn-collect-all-animals" type="button" class="hidden btn-press bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">🥛 جمع كل المنتجات</button><button id="btn-feed-all-animals" type="button" class="hidden btn-press bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">🍽️ إطعام الكل</button><button data-auto-sort="animals" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="animals" type="button" class="btn-press bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء حيوان أو بركة سمك
           </button></div>
         </div>
@@ -507,7 +543,7 @@
               <p class="text-xs text-slate-500">حوّل المحاصيل والمنتجات الحيوانية إلى منتجات عالية القيمة للعملاء</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 flex-wrap"><button data-auto-sort="machines" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="machines" type="button" class="btn-press bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-extrabold px-3 py-2 rounded-xl">
+          <div class="flex items-center gap-2 flex-wrap"><button id="btn-collect-all-machines" type="button" class="hidden btn-press bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">📦 استلام كل الجاهز</button><button data-auto-sort="machines" type="button" class="arrange-only hidden btn-press bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold px-3 py-2 rounded-xl shadow-sm">✨ ترتيب تلقائي</button><button data-open-shop-tab="machines" type="button" class="btn-press bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-extrabold px-3 py-2 rounded-xl">
             + شراء ماكينة من المتجر
           </button></div>
         </div>
@@ -528,17 +564,47 @@
             + استقبال عميل إضافي
           </button>
         </div>
-        <div id="vip-truck-box" class="mb-4"></div>
+        <div id="vip-truck-box" class="mb-3"></div>
+        <div id="supply-contract-box" class="mb-4"></div>
         <div id="customers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </section>
 
 
     </main>
+
+    <!-- Mobile Fixed Bottom Navigation Bar (Thumb-Friendly) -->
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 border-t-2 border-emerald-200 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-2 py-1.5">
+      <div class="grid grid-cols-5 gap-1 text-[11px] font-extrabold">
+        <button id="mob-nav-farm" type="button" class="btn-press flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-700 bg-emerald-50">
+          <span class="text-lg leading-none">🏡</span>
+          <span class="mt-0.5">المزرعة</span>
+        </button>
+        <button id="mob-nav-shop" type="button" class="btn-press flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-700 active:bg-emerald-50">
+          <span class="text-lg leading-none">🏪</span>
+          <span class="mt-0.5">المتجر</span>
+        </button>
+        <button id="mob-nav-warehouse" type="button" class="btn-press relative flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-700 active:bg-amber-50">
+          <span class="text-lg leading-none">📦</span>
+          <span class="mt-0.5">المخزن</span>
+          <span id="mob-warehouse-badge" class="absolute top-0.5 left-2 bg-amber-500 text-white text-[9px] font-black px-1.5 rounded-full">0</span>
+        </button>
+        <button id="mob-nav-customers" type="button" class="btn-press relative flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-700 active:bg-indigo-50">
+          <span class="text-lg leading-none">🤝</span>
+          <span class="mt-0.5">العملاء</span>
+          <span id="mob-customers-badge" class="absolute top-0.5 left-2 bg-indigo-600 text-white text-[9px] font-black px-1.5 rounded-full">0</span>
+        </button>
+        <button id="mob-nav-quests" type="button" class="btn-press relative flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-700 active:bg-rose-50">
+          <span class="text-lg leading-none">🏆</span>
+          <span class="mt-0.5">المهام</span>
+          <span id="mob-quests-badge" class="hidden absolute top-0.5 left-2 bg-rose-600 text-white text-[9px] font-black px-1.5 rounded-full">0</span>
+        </button>
+      </div>
+    </nav>
   </div>
 
   <!-- ===================== GENERIC MODAL OVERLAY ===================== -->
-  <div id="modal-backdrop" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-    <div id="modal-box" class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden anim-pop">
+  <div id="modal-backdrop" class="hidden fixed inset-0 z-50 bg-slate-900/60 flex items-end sm:items-center justify-center p-0 sm:p-5">
+    <div id="modal-box" class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[88dvh] sm:max-h-[90vh] flex flex-col overflow-hidden anim-pop">
       <div class="px-5 py-4 bg-gradient-to-l from-emerald-700 to-green-600 text-white flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2.5">
           <span id="modal-icon" class="text-2xl">🏪</span>
@@ -679,7 +745,7 @@
         },
       ];
 
-      const HELPER_COST = 500;
+      const HELPER_COST = 1000;
       const HELPER_DURATION_SEC = 20 * 60; // 20 minutes
 
       const BADGES = [
@@ -689,6 +755,65 @@
         { id: 'b_orders', icon: '🤝', name: 'شريك العملاء', desc: 'سلّم 10 طلبات للعملاء', check: (s) => (s.completedOrders || 0) >= 10 },
         { id: 'b_vip', icon: '🚚', name: 'بطل الشاحنة VIP', desc: 'اشحن شاحنة VIP مرتين', check: (s) => (s.stats.vipDeliveries || 0) >= 2 },
         { id: 'b_rich', icon: '💎', name: 'ثري المزرعة', desc: 'اجمع رصيد 15,000 جنيه', check: (s) => (s.balance || 0) >= 15000 },
+      ];
+
+      const COMBO_MEALS = [
+        {
+          id: 'combo_hotel_breakfast',
+          name: 'فطور الفنادق الفاخر',
+          icon: '🥐',
+          inputs: [{ id: 'bread', qty: 1 }, { id: 'buffalo_cheese', qty: 1 }, { id: 'juice_mango', qty: 1 }],
+          warehouseSellPrice: 300,
+          customerSellPrice: 410,
+          allowedCustomerTypes: ['restaurant', 'hotel'],
+        },
+        {
+          id: 'combo_burger_meal',
+          name: 'وجبة البرجر الفاخرة',
+          icon: '🍔',
+          inputs: [{ id: 'beef_burger', qty: 1 }, { id: 'pomme_frites', qty: 1 }, { id: 'juice_orange', qty: 1 }],
+          warehouseSellPrice: 360,
+          customerSellPrice: 480,
+          allowedCustomerTypes: ['restaurant', 'hotel'],
+        },
+        {
+          id: 'combo_royal_dessert',
+          name: 'طبق الحلوى الملكي',
+          icon: '🍰',
+          inputs: [{ id: 'cake_strawberry', qty: 1 }, { id: 'icecream_vanilla', qty: 1 }, { id: 'milkshake_strawberry', qty: 1 }],
+          warehouseSellPrice: 400,
+          customerSellPrice: 540,
+          allowedCustomerTypes: ['restaurant', 'hotel'],
+        },
+        {
+          id: 'combo_grill_feast',
+          name: 'وجبة الشواء الملكي',
+          icon: '🍖',
+          inputs: [{ id: 'grilled_beef', qty: 1 }, { id: 'frozen_salad', qty: 1 }, { id: 'bread', qty: 1 }],
+          warehouseSellPrice: 420,
+          customerSellPrice: 560,
+          allowedCustomerTypes: ['restaurant', 'hotel'],
+        },
+        {
+          id: 'combo_fish_platter',
+          name: 'وليمة السمك المشوي',
+          icon: '🐟',
+          inputs: [{ id: 'grilled_fish', qty: 1 }, { id: 'frozen_salad', qty: 1 }, { id: 'juice_lemon', qty: 1 }],
+          warehouseSellPrice: 440,
+          customerSellPrice: 580,
+          allowedCustomerTypes: ['restaurant', 'hotel'],
+        },
+      ];
+
+      const BANK_CYCLE_SEC = 12 * 60 * 60; // 12 hours
+      const SECOND_FIELD_MIN_LEVEL = 5;
+      const SECOND_FIELD_COST = 1500;
+
+      const BANK_SECTORS = [
+        { id: 'grain_fund', name: 'صندوق الحبوب الآمن', icon: '🌾', risk: 'منخفضة', minPct: -5, maxPct: 12, desc: 'استثمار مستقر بتذبذب محدود (-5% إلى +12% كل 12 ساعة)' },
+        { id: 'fruit_export', name: 'أسهم تصدير الفواكه', icon: '🍎', risk: 'متوسطة', minPct: -15, maxPct: 28, desc: 'نمو متوازن مع تغير مواسم التصدير (-15% إلى +28%)' },
+        { id: 'food_factories', name: 'بورصة مصانع الأغذية', icon: '🏭', risk: 'عالية', minPct: -25, maxPct: 48, desc: 'أرباح قوية محتملة مع مخاطرة أعلى (-25% إلى +48%)' },
+        { id: 'vip_logistics', name: 'أسهم شحن الـ VIP', icon: '🚚', risk: 'قصوى', minPct: -35, maxPct: 75, desc: 'أعلى عائد ممكن وتقلب حاد كالبورصة (-35% إلى +75%)' },
       ];
 
       const WEATHERS = [
@@ -866,6 +991,7 @@
           name: 'ماكينة الشواء',
           icon: '🔥',
           tier: 5,
+          productionTimeOverride: 480,
           recipes: [
             { id: 'grilled_goat', name: 'لحم ماعز مشوي', icon: '🍖', inputs: [{ id: 'goat_meat', qty: 1 }], outputQty: 1 },
             { id: 'grilled_beef', name: 'لحم بقري مشوي', icon: '🥩', inputs: [{ id: 'beef', qty: 1 }], outputQty: 1 },
@@ -878,14 +1004,16 @@
 
       const MACHINES = RAW_MACHINES.map((m) => {
         const econ = computeTierEconomics('machine', m.tier, 5);
+        const prodTime = m.productionTimeOverride || econ.productionTime;
         return {
           ...m,
           type: 'machine',
           ...econ,
+          productionTime: prodTime,
           recipes: m.recipes.map((r) => ({
             ...r,
             machineId: m.id,
-            productionTime: econ.productionTime,
+            productionTime: prodTime,
             warehouseSellPrice: econ.warehouseSellPrice,
             customerSellPrice: econ.customerSellPrice,
           })),
@@ -956,6 +1084,19 @@
         });
       });
 
+      COMBO_MEALS.forEach((cm) => {
+        ITEMS_BY_ID[cm.id] = {
+          id: cm.id,
+          name: cm.name,
+          icon: cm.icon,
+          category: 'machine_products',
+          warehouseSellPrice: cm.warehouseSellPrice,
+          customerSellPrice: cm.customerSellPrice,
+          allowedCustomerTypes: cm.allowedCustomerTypes,
+          isCombo: true,
+        };
+      });
+
       const CUSTOMER_DIRECTORY = [
         { name: 'مطعم السعادة', type: 'restaurant', typeLabel: 'مطعم', icon: '🍽️' },
         { name: 'مطعم المذاق', type: 'restaurant', typeLabel: 'مطعم', icon: '🍽️' },
@@ -969,7 +1110,7 @@
       ];
 
       const LAND_PRICE = 1; // 1 جنيه per plot as specified in v1
-      const INITIAL_BALANCE = 8000;
+      const INITIAL_BALANCE = 3000;
       const STORAGE_PREFIX = 'happy_farm_v1_account_';
       const ACCOUNTS_INDEX_KEY = 'happy_farm_v1_accounts_index';
       const LAST_ACCOUNT_KEY = 'happy_farm_v1_last_account';
@@ -1476,6 +1617,79 @@
        * Non-destructive migration: preserves 100% of existing saved accounts
        * across updates while safely adding new fields if missing.
        */
+      function encodeAccountCode(acc) {
+        const json = JSON.stringify(acc);
+        const bytes = new TextEncoder().encode(json);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        return 'HF1:' + btoa(bin);
+      }
+
+      function decodeAccountCode(rawCode) {
+        const cleaned = String(rawCode || '').trim();
+        if (!cleaned.startsWith('HF1:')) return null;
+        const b64 = cleaned.slice(4).replace(/\s+/g, '');
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const json = new TextDecoder().decode(bytes);
+        const parsed = JSON.parse(json);
+        if (!parsed || !parsed.name || !Array.isArray(parsed.land) || typeof parsed.balance !== 'number') return null;
+        return migrateAccountState(parsed);
+      }
+
+      function copyTextReliable(str) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(str).then(() => true).catch(() => fallbackCopy(str));
+        }
+        return Promise.resolve(fallbackCopy(str));
+      }
+
+      function fallbackCopy(str) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = str;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          ta.remove();
+          return ok;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function createSupplyContract() {
+        const partners = CUSTOMER_DIRECTORY.filter((c) => c.type === 'hotel' || c.type === 'hypermarket');
+        const partner = partners[Math.floor(Math.random() * partners.length)] || CUSTOMER_DIRECTORY[3];
+        const sellables = Object.values(ITEMS_BY_ID).filter((it) => it.category !== 'seeds' && it.customerSellPrice);
+        const items = [];
+        const used = new Set();
+        for (let i = 0; i < 2; i++) {
+          const pool = sellables.filter((it) => !used.has(it.id));
+          if (!pool.length) break;
+          const pick = pool[Math.floor(Math.random() * pool.length)];
+          used.add(pick.id);
+          const qty = pick.category === 'machine_products' ? 4 : 8;
+          const unitPrice = Math.round((pick.customerSellPrice || 45) * 1.6);
+          items.push({ itemId: pick.id, qty, unitPrice });
+        }
+        const totalReward = items.reduce((s, r) => s + r.qty * r.unitPrice, 0);
+        return {
+          id: makeId('contract'),
+          partnerName: partner.name,
+          partnerIcon: partner.icon,
+          items,
+          totalReward,
+          durationSec: 30 * 60, // 30 minutes once accepted
+          status: 'available', // available | active
+          endsAt: null,
+        };
+      }
+
       function createVipOrder() {
         const sellables = Object.values(ITEMS_BY_ID).filter((it) => it.category !== 'seeds' && it.customerSellPrice);
         const chosen = [];
@@ -1533,7 +1747,24 @@
           if (typeof acc.stats.totalSpent !== 'number') acc.stats.totalSpent = 0;
         }
         if (typeof acc.settings.nightMode !== 'boolean') acc.settings.nightMode = false;
+        acc.trees.forEach((t) => { if (!t.level) t.level = 1; });
+        acc.animals.forEach((a) => { if (!a.level) a.level = 1; });
         if (!acc.vipOrder) acc.vipOrder = createVipOrder();
+        if (!acc.supplyContract) acc.supplyContract = createSupplyContract();
+        if (typeof acc.land2Unlocked !== 'boolean') acc.land2Unlocked = false;
+        if (!Array.isArray(acc.land2)) acc.land2 = [];
+        acc.land2.forEach((p) => { if (!p.level) p.level = 1; });
+        if (!acc.bank || typeof acc.bank !== 'object') {
+          acc.bank = {
+            holdings: { grain_fund: 0, fruit_export: 0, food_factories: 0, vip_logistics: 0 },
+            nextCycleAt: Date.now() + BANK_CYCLE_SEC * 1000,
+            history: [],
+          };
+        } else {
+          if (!acc.bank.holdings) acc.bank.holdings = { grain_fund: 0, fruit_export: 0, food_factories: 0, vip_logistics: 0 };
+          if (!Array.isArray(acc.bank.history)) acc.bank.history = [];
+          if (!acc.bank.nextCycleAt) acc.bank.nextCycleAt = Date.now() + BANK_CYCLE_SEC * 1000;
+        }
         return acc;
       }
 
@@ -1593,7 +1824,7 @@
             {
               id: makeId('notif'),
               icon: '🌾',
-              text: `مرحباً ${Storage.normalizeName(playerName)}! بدأت مزرعتك برصيد 8,000 جنيه و6 قطع أراضي وشجرة تفاح ودجاجة.`,
+              text: `مرحباً ${Storage.normalizeName(playerName)}! بدأت مزرعتك برصيد 3,000 جنيه و6 قطع أراضي وشجرة تفاح ودجاجة.`,
               time: now,
               read: false,
               actionType: null,
@@ -1619,6 +1850,7 @@
       let activePlantingSeedId = null; // Continuous planting mode!
       let arrangeMode = false; // Move & reorder mode!
       let dragSource = null;
+      let activeField = 'land'; // 'land' | 'land2'
       let activeModal = null; // null | 'shop' | 'warehouse' | 'customers' | 'notifications' | 'settings' | 'seedPicker' | 'machineModal'
       let activeShopTab = 'seeds';
       let activeWarehouseTab = 'crops';
@@ -1675,6 +1907,138 @@
         return WEATHERS.find((w) => w.id === wid) || WEATHERS[0];
       }
 
+      function getActiveLandArray() {
+        if (!state) return [];
+        if (activeField === 'land2' && state.land2Unlocked) return state.land2;
+        activeField = 'land';
+        return state.land;
+      }
+
+      function findPlotAcrossFields(plotId) {
+        if (!state) return null;
+        let plot = state.land.find((p) => p.id === plotId);
+        if (plot) return { plot, field: 'land' };
+        if (Array.isArray(state.land2)) {
+          plot = state.land2.find((p) => p.id === plotId);
+          if (plot) return { plot, field: 'land2' };
+        }
+        return null;
+      }
+
+      function unlockSecondField(anchorEl = null) {
+        if (!state || state.land2Unlocked) return;
+        if ((state.level || 1) < SECOND_FIELD_MIN_LEVEL) {
+          SoundEngine.error();
+          showToast(`يُفتح الحقل الثاني عند الوصول للمستوى ${SECOND_FIELD_MIN_LEVEL} (مستواك الحالي: ${state.level || 1})`, 'warning', '🔒');
+          return;
+        }
+        if (!adjustBalance(-SECOND_FIELD_COST, 'تم فتح توسعة الحقل الثاني (+6 أراضٍ +15% سرعة نمو!)', anchorEl)) return;
+        state.land2Unlocked = true;
+        if (!state.land2 || state.land2.length === 0) {
+          state.land2 = Array.from({ length: 6 }, (_, i) => ({
+            id: makeId(`f2plot_${i + 1}`),
+            status: 'empty',
+            level: 1,
+            cropId: null,
+            startedAt: null,
+            endsAt: null,
+            notified: false,
+          }));
+        }
+        activeField = 'land2';
+        SoundEngine.success();
+        grantXP(100, anchorEl);
+        pushNotification('🌿', 'مبروك! تم فتح الحقل الثاني بـ 6 أراضٍ إضافية وسرعة نمو +15%!');
+        saveAndRender();
+      }
+
+      function craftComboMeal(comboId, anchorEl = null) {
+        const cm = COMBO_MEALS.find((x) => x.id === comboId);
+        if (!cm) return;
+        for (const inp of cm.inputs) {
+          if (getStock(inp.id) < inp.qty) {
+            SoundEngine.error();
+            const it = ITEMS_BY_ID[inp.id];
+            showToast(`ينقصك ${inp.qty} × ${it ? it.name : inp.id} لتحضير ${cm.name}`, 'error', '⚠️');
+            return;
+          }
+        }
+        cm.inputs.forEach((inp) => removeStock(inp.id, inp.qty));
+        addStock(cm.id, 1);
+        if (state.stats) state.stats.crafts = (state.stats.crafts || 0) + 1;
+        SoundEngine.success();
+        grantXP(50, anchorEl);
+        advanceQuests('craft', 1);
+        spawnFloatingFX(`+1 ${cm.icon} ${cm.name}`, 'text-orange-600', anchorEl);
+        showToast(`تم تحضير ${cm.name} وإضافتها للمخزن!`, 'success', cm.icon);
+        checkTimersAndNotifications();
+        saveAndRender();
+      }
+
+      function bankDeposit(sectorId, amount, anchorEl = null) {
+        const sec = BANK_SECTORS.find((s) => s.id === sectorId);
+        const amt = Math.floor(Number(amount) || 0);
+        if (!sec || amt < 50) {
+          SoundEngine.error();
+          showToast('الحد الأدنى للاستثمار في البورصة هو 50 جنيه', 'warning', '🏦');
+          return;
+        }
+        if (!adjustBalance(-amt, `استثمار ${formatMoney(amt)} ج في ${sec.name}`, anchorEl)) return;
+        state.bank.holdings[sectorId] = (state.bank.holdings[sectorId] || 0) + amt;
+        SoundEngine.buy();
+        saveAndRender();
+      }
+
+      function bankWithdraw(sectorId, anchorEl = null) {
+        const sec = BANK_SECTORS.find((s) => s.id === sectorId);
+        const cur = Math.floor(state.bank.holdings[sectorId] || 0);
+        if (!sec || cur <= 0) return;
+        state.bank.holdings[sectorId] = 0;
+        SoundEngine.sell();
+        adjustBalance(cur, `سحب ${formatMoney(cur)} ج من ${sec.name}`, anchorEl);
+        saveAndRender();
+      }
+
+      function settleBankCycleIfDue(now) {
+        if (!state || !state.bank) return false;
+        const cycleMs = getEffectiveDurationMs(BANK_CYCLE_SEC, 'generic', 1);
+        if (!state.bank.nextCycleAt) {
+          state.bank.nextCycleAt = now + cycleMs;
+          return false;
+        }
+        if (now < state.bank.nextCycleAt) return false;
+
+        let anyInvested = false;
+        const roundLines = [];
+        let totalDelta = 0;
+        BANK_SECTORS.forEach((sec) => {
+          const prev = Math.floor(state.bank.holdings[sec.id] || 0);
+          if (prev <= 0) return;
+          anyInvested = true;
+          const pct = Math.round(sec.minPct + Math.random() * (sec.maxPct - sec.minPct));
+          const delta = Math.round((prev * pct) / 100);
+          const nextVal = Math.max(0, prev + delta);
+          state.bank.holdings[sec.id] = nextVal;
+          totalDelta += delta;
+          roundLines.push(`${sec.icon} ${sec.name}: ${pct >= 0 ? '+' : ''}${pct}% (${delta >= 0 ? '+' : ''}${formatMoney(delta)}ج)`);
+        });
+
+        state.bank.nextCycleAt = now + cycleMs;
+        if (anyInvested) {
+          state.bank.history.unshift({
+            time: now,
+            totalDelta,
+            summary: roundLines.join(' • '),
+          });
+          if (state.bank.history.length > 8) state.bank.history.length = 8;
+          const icon = totalDelta >= 0 ? '📈' : '📉';
+          const msg = `تسوية البورصة (12 ساعة): ${totalDelta >= 0 ? 'مكسب +' : 'خسارة '}${formatMoney(Math.abs(totalDelta))} جنيه`;
+          pushNotification(icon, `${msg} — ${roundLines[0] || ''}`);
+          showToast(msg, totalDelta >= 0 ? 'success' : 'warning', icon);
+        }
+        return true;
+      }
+
       function getEffectiveDurationMs(baseSeconds, kind = 'generic', machineLevel = 1) {
         const mult = (state && state.settings && state.settings.timeMultiplier) || 1;
         const w = getCurrentWeather();
@@ -1684,7 +2048,15 @@
           if (machineLevel === 2) speedFactor += 0.25;
           if (machineLevel >= 3) speedFactor += 0.4;
         }
-        if (kind === 'tree' && w.treeSpeedBonus) speedFactor += w.treeSpeedBonus;
+        if (kind === 'tree') {
+          if (w.treeSpeedBonus) speedFactor += w.treeSpeedBonus;
+          if (machineLevel === 2) speedFactor += 0.25;
+          if (machineLevel >= 3) speedFactor += 0.45;
+        }
+        if (kind === 'animal') {
+          if (machineLevel === 2) speedFactor += 0.25;
+          if (machineLevel >= 3) speedFactor += 0.45;
+        }
         if (kind === 'machine') {
           if (machineLevel === 2) speedFactor += 0.25;
           if (machineLevel >= 3) speedFactor += 0.45;
@@ -1771,7 +2143,7 @@
       function moveFarmItem(zone, index, dir) {
         if (!state || !Array.isArray(state[zone])) return;
         const arr = state[zone];
-        const cols = getGridColumns(`${zone}-grid`);
+        const cols = getGridColumns(zone === 'land2' ? 'land-grid' : `${zone}-grid`);
         let targetIdx = index;
         // In RTL layout: right is index - 1, left is index + 1
         if (dir === 'right') targetIdx = index - 1;
@@ -1801,7 +2173,7 @@
         if (!state || !Array.isArray(state[zone])) return;
         if (zone === 'land') {
           const rank = { ready: 0, growing: 1, empty: 2 };
-          state.land.sort((a, b) => (rank[a.status] - rank[b.status]) || String(a.cropId || '').localeCompare(String(b.cropId || '')));
+          getActiveLandArray().sort((a, b) => (rank[a.status] - rank[b.status]) || String(a.cropId || '').localeCompare(String(b.cropId || '')));
         } else if (zone === 'trees') {
           state.trees.sort((a, b) => String(a.treeId).localeCompare(String(b.treeId)));
         } else if (zone === 'animals') {
@@ -1817,7 +2189,8 @@
       }
 
       function applyFertilizer(plotId, anchorEl = null) {
-        const plot = state.land.find((p) => p.id === plotId);
+        const found = findPlotAcrossFields(plotId);
+        const plot = found ? found.plot : null;
         if (!plot || plot.status !== 'growing') return;
         if (getStock('magic_fertilizer') < 1) {
           SoundEngine.error();
@@ -1901,7 +2274,8 @@
       }
 
       function upgradeLandPlot(plotId, anchorEl = null) {
-        const plot = state.land.find((p) => p.id === plotId);
+        const found = findPlotAcrossFields(plotId);
+        const plot = found ? found.plot : null;
         if (!plot) return;
         const cur = plot.level || 1;
         if (cur >= 3) return;
@@ -1929,6 +2303,73 @@
         saveAndRender();
       }
 
+      function upgradeTree(treeInstId, anchorEl = null) {
+        const tr = state.trees.find((t) => t.id === treeInstId);
+        if (!tr) return;
+        const cur = tr.level || 1;
+        if (cur >= 3) return;
+        const cost = cur === 1 ? 80 : 160;
+        if (!adjustBalance(-cost, `ترقية الشجرة للمستوى ${cur + 1}`, anchorEl)) return;
+        tr.level = cur + 1;
+        SoundEngine.success();
+        grantXP(25, anchorEl);
+        saveAndRender();
+      }
+
+      function upgradeAnimal(animalInstId, anchorEl = null) {
+        const an = state.animals.find((a) => a.id === animalInstId);
+        if (!an) return;
+        const cur = an.level || 1;
+        if (cur >= 3) return;
+        const cost = cur === 1 ? 90 : 180;
+        const def = ANIMALS.find((x) => x.id === an.animalId);
+        if (!adjustBalance(-cost, `ترقية ${def ? def.name : 'الحيوان'} للمستوى ${cur + 1}`, anchorEl)) return;
+        an.level = cur + 1;
+        SoundEngine.success();
+        grantXP(25, anchorEl);
+        saveAndRender();
+      }
+
+      function acceptSupplyContract() {
+        const c = state.supplyContract;
+        if (!c || c.status !== 'available') return;
+        c.status = 'active';
+        c.endsAt = Date.now() + (c.durationSec || 1800) * 1000;
+        SoundEngine.success();
+        showToast(`تم قبول عقد التوريد مع ${c.partnerName} — لديك 30 دقيقة للتنفيذ!`, 'info', '📜');
+        saveAndRender();
+      }
+
+      function refreshSupplyContract() {
+        state.supplyContract = createSupplyContract();
+        SoundEngine.click();
+        showToast('تم عرض عقد توريد جديد', 'info', '📜');
+        saveAndRender();
+      }
+
+      function deliverSupplyContract(anchorEl = null) {
+        const c = state.supplyContract;
+        if (!c || c.status !== 'active') return;
+        const ok = c.items.every((req) => getStock(req.itemId) >= req.qty);
+        if (!ok) {
+          SoundEngine.error();
+          showToast('الكمية غير كافية لإتمام عقد التوريد!', 'error', '⚠️');
+          return;
+        }
+        c.items.forEach((req) => removeStock(req.itemId, req.qty));
+        // Free 20-minute Helper Ticket!
+        const baseUntil = Math.max(Date.now(), state.helperUntil || 0);
+        state.helperUntil = baseUntil + HELPER_DURATION_SEC * 1000;
+        state.completedOrders = (state.completedOrders || 0) + 1;
+        SoundEngine.success();
+        adjustBalance(c.totalReward, `تم تسليم عقد ${c.partnerName} + تذكرة عامل 20 دقيقة مجاناً!`, anchorEl);
+        grantXP(100, anchorEl);
+        advanceQuests('deliver', 1);
+        pushNotification('📜', `أنجزت عقد ${c.partnerName} وحصلت على ${formatMoney(c.totalReward)} جنيه + 20 دقيقة عامل مجاناً!`);
+        state.supplyContract = createSupplyContract();
+        saveAndRender();
+      }
+
       function deliverVipTruck(anchorEl = null) {
         const vip = state.vipOrder;
         if (!vip) return;
@@ -1953,7 +2394,7 @@
 
       function buildArrangeControlsHtml(zone, index, total) {
         if (!arrangeMode) return '';
-        const cols = getGridColumns(`${zone}-grid`);
+        const cols = getGridColumns(zone === 'land2' ? 'land-grid' : `${zone}-grid`);
         const canRight = index > 0;
         const canLeft = index < total - 1;
         const canUp = index - cols >= 0;
@@ -1993,21 +2434,24 @@
       function showToast(message, type = 'info', icon = '🔔') {
         const container = document.getElementById('toast-container');
         if (!container) return;
+        while (container.children.length >= 2) {
+          container.firstElementChild.remove();
+        }
         const colors = {
-          success: 'bg-emerald-600 text-white border-emerald-400',
-          error: 'bg-rose-600 text-white border-rose-400',
-          warning: 'bg-amber-500 text-white border-amber-300',
-          info: 'bg-slate-800 text-white border-slate-600',
+          success: 'bg-emerald-600/95 text-white border-emerald-400',
+          error: 'bg-rose-600/95 text-white border-rose-400',
+          warning: 'bg-amber-500/95 text-white border-amber-300',
+          info: 'bg-slate-800/95 text-white border-slate-600',
         };
         const toast = document.createElement('div');
-        toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl text-sm font-bold anim-pop ${colors[type] || colors.info}`;
-        toast.innerHTML = `<span class="text-lg shrink-0">${icon}</span><span class="flex-1 leading-snug">${message}</span>`;
+        toast.className = `pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-lg text-xs font-bold anim-pop max-w-full ${colors[type] || colors.info}`;
+        toast.innerHTML = `<span class="text-sm shrink-0">${icon}</span><span class="truncate">${message}</span>`;
         container.appendChild(toast);
         setTimeout(() => {
           toast.style.opacity = '0';
-          toast.style.transition = 'opacity 0.25s ease';
-          setTimeout(() => toast.remove(), 260);
-        }, 3200);
+          toast.style.transition = 'opacity 0.2s ease';
+          setTimeout(() => toast.remove(), 210);
+        }, 2100);
       }
 
       function pushNotification(icon, text, actionType = null) {
@@ -2094,8 +2538,11 @@
         const now = Date.now();
         let changed = maybeRotateWeatherAndMarket(now);
 
-        // 1. Land Crops
-        state.land.forEach((plot) => {
+        // 0. Farm Bank 12-Hour Stock Market Cycle
+        if (settleBankCycleIfDue(now)) changed = true;
+
+        // 1. Land Crops (Field 1 + Field 2)
+        [...state.land, ...(state.land2 || [])].forEach((plot) => {
           if (plot.status === 'growing' && plot.endsAt && now >= plot.endsAt) {
             plot.status = 'ready';
             if (!plot.notified) {
@@ -2184,8 +2631,8 @@
 
         // 4b. Farm Helper Auto-Tasks (20 min worker: harvests land & trees, feeds animals, collects animal products!)
         if (state.helperUntil && now < state.helperUntil) {
-          // Harvest ready land plots
-          state.land.forEach((plot) => {
+          // Harvest ready land plots (Field 1 + Field 2)
+          [...state.land, ...(state.land2 || [])].forEach((plot) => {
             if (plot.status === 'ready') {
               const crop = CROPS.find((c) => c.id === plot.cropId);
               if (crop) {
@@ -2208,13 +2655,14 @@
             if (tr.status === 'ready') {
               const def = TREES.find((t) => t.id === tr.treeId);
               if (def) {
-                addStock(def.outputId, 1);
-                if (state.stats) state.stats.harvests = (state.stats.harvests || 0) + 1;
+                const tYield = (tr.level || 1) >= 3 ? 2 : 1;
+                addStock(def.outputId, tYield);
+                if (state.stats) state.stats.harvests = (state.stats.harvests || 0) + tYield;
                 grantXP(15);
                 advanceQuests('harvest', 1);
                 tr.status = 'growing';
                 tr.startedAt = now;
-                tr.endsAt = now + getEffectiveDurationMs(def.productionTime, 'tree');
+                tr.endsAt = now + getEffectiveDurationMs(def.productionTime, 'tree', tr.level || 1);
                 tr.notified = false;
                 changed = true;
               }
@@ -2225,7 +2673,8 @@
             const def = ANIMALS.find((a) => a.id === an.animalId);
             if (!def) return;
             if (an.status === 'ready') {
-              const finalQty = an.boosted ? def.outputQty * 2 : def.outputQty;
+              const lvlMult = (an.level || 1) >= 3 ? 2 : 1;
+        const finalQty = def.outputQty * lvlMult * (an.boosted ? 2 : 1);
               addStock(def.outputId, finalQty);
               grantXP(15);
               an.status = 'hungry';
@@ -2241,7 +2690,7 @@
               advanceQuests('feed', 1);
               an.status = 'producing';
               an.startedAt = now;
-              an.endsAt = now + getEffectiveDurationMs(def.productionTime);
+              an.endsAt = now + getEffectiveDurationMs(def.productionTime, 'animal', an.level || 1);
               an.notified = false;
               changed = true;
             }
@@ -2250,6 +2699,14 @@
           state.helperUntil = 0;
           pushNotification('👷', 'انتهت مدة عمل عامل المزرعة (20 دقيقة). يمكنك تجديده في أي وقت!');
           showToast('انتهت مدة عامل المزرعة (20 دقيقة)', 'warning', '👷');
+          changed = true;
+        }
+
+        // 4c. Supply Contract Expiration Check
+        if (state.supplyContract && state.supplyContract.status === 'active' && state.supplyContract.endsAt && now >= state.supplyContract.endsAt) {
+          pushNotification('📜', `انتهى وقت عقد التوريد مع ${state.supplyContract.partnerName} — تم توفير عقد جديد!`);
+          showToast(`انتهى وقت عقد ${state.supplyContract.partnerName}`, 'warning', '📜');
+          state.supplyContract = createSupplyContract();
           changed = true;
         }
 
@@ -2306,8 +2763,10 @@
       }
 
       function plantCropOnPlot(plotId, seedId, anchorEl = null) {
-        const plot = state.land.find((p) => p.id === plotId);
-        if (!plot || plot.status !== 'empty') return;
+        const found = findPlotAcrossFields(plotId);
+        if (!found || found.plot.status !== 'empty') return;
+        const plot = found.plot;
+        const isField2 = found.field === 'land2';
         const seedItem = ITEMS_BY_ID[seedId];
         if (!seedItem || seedItem.category !== 'seeds' || !seedItem.cropId) return;
         if (getStock(seedId) < 1) {
@@ -2324,7 +2783,8 @@
         plot.status = 'growing';
         plot.cropId = crop.id;
         plot.startedAt = now;
-        plot.endsAt = now + getEffectiveDurationMs(crop.productionTime, 'crop', plot.level || 1);
+        const baseMs = getEffectiveDurationMs(crop.productionTime, 'crop', plot.level || 1);
+        plot.endsAt = now + (isField2 ? Math.max(2000, Math.round(baseMs / 1.15)) : baseMs);
         plot.notified = false;
 
         SoundEngine.click();
@@ -2341,7 +2801,8 @@
       }
 
       function harvestCropPlot(plotId, anchorEl = null) {
-        const plot = state.land.find((p) => p.id === plotId);
+        const found = findPlotAcrossFields(plotId);
+        const plot = found ? found.plot : null;
         if (!plot || plot.status !== 'ready') return;
         const crop = CROPS.find((c) => c.id === plot.cropId);
         if (!crop) return;
@@ -2363,8 +2824,125 @@
         saveAndRender();
       }
 
+      function harvestAllReadyTrees() {
+        const ready = state.trees.filter((t) => t.status === 'ready');
+        if (!ready.length) return;
+        const now = Date.now();
+        let totalYield = 0;
+        ready.forEach((tr) => {
+          const def = TREES.find((t) => t.id === tr.treeId);
+          if (!def) return;
+          const y = (tr.level || 1) >= 3 ? 2 : 1;
+          addStock(def.outputId, y);
+          totalYield += y;
+          if (state.stats) state.stats.harvests = (state.stats.harvests || 0) + y;
+          tr.status = 'growing';
+          tr.startedAt = now;
+          tr.endsAt = now + getEffectiveDurationMs(def.productionTime, 'tree', tr.level || 1);
+          tr.notified = false;
+        });
+        SoundEngine.success();
+        grantXP(ready.length * 15);
+        advanceQuests('harvest', ready.length);
+        showToast(`تم حصاد ${ready.length} شجرة (+${totalYield} ثمرة)!`, 'success', '🌳');
+        checkTimersAndNotifications();
+        saveAndRender();
+      }
+
+      function collectAllReadyAnimals() {
+        const ready = state.animals.filter((a) => a.status === 'ready');
+        if (!ready.length) return;
+        let count = 0;
+        ready.forEach((an) => {
+          const def = ANIMALS.find((a) => a.id === an.animalId);
+          if (!def) return;
+          const lvlMult = (an.level || 1) >= 3 ? 2 : 1;
+          const finalQty = def.outputQty * lvlMult * (an.boosted ? 2 : 1);
+          addStock(def.outputId, finalQty);
+          an.status = 'hungry';
+          an.boosted = false;
+          an.startedAt = null;
+          an.endsAt = null;
+          an.notified = false;
+          count++;
+        });
+        SoundEngine.success();
+        grantXP(count * 15);
+        showToast(`تم جمع منتجات ${count} حيوانات!`, 'success', '🥛');
+        checkTimersAndNotifications();
+        saveAndRender();
+      }
+
+      function feedAllHungryAnimals() {
+        const now = Date.now();
+        let fed = 0;
+        state.animals.forEach((an) => {
+          if (an.status !== 'hungry') return;
+          const def = ANIMALS.find((a) => a.id === an.animalId);
+          if (!def) return;
+          if (getStock(def.feedId) < 1) return;
+          removeStock(def.feedId, 1);
+          an.status = 'producing';
+          an.startedAt = now;
+          an.endsAt = now + getEffectiveDurationMs(def.productionTime, 'animal', an.level || 1);
+          an.notified = false;
+          fed++;
+        });
+        if (!fed) {
+          SoundEngine.error();
+          showToast('لا يوجد طعام كافٍ في المخزن للحيوانات الجائعة!', 'error', '⚠️');
+          return;
+        }
+        SoundEngine.success();
+        if (state.stats) state.stats.feeds = (state.stats.feeds || 0) + fed;
+        advanceQuests('feed', fed);
+        showToast(`تم إطعام ${fed} حيوانات بنجاح!`, 'success', '🍽️');
+        saveAndRender();
+      }
+
+      function collectAllReadyMachines() {
+        const ready = state.machines.filter((m) => m.status === 'ready');
+        if (!ready.length) return;
+        let count = 0;
+        ready.forEach((mc) => {
+          const def = MACHINES.find((m) => m.id === mc.machineId);
+          const rec = def && def.recipes.find((r) => r.id === mc.recipeId);
+          if (!def || !rec) return;
+          const qty = mc.batchOutputQty || rec.outputQty || 1;
+          addStock(rec.id, qty);
+          mc.status = 'idle';
+          mc.recipeId = null;
+          mc.batchOutputQty = 0;
+          mc.startedAt = null;
+          mc.endsAt = null;
+          mc.notified = false;
+          count++;
+        });
+        SoundEngine.success();
+        if (state.stats) state.stats.crafts = (state.stats.crafts || 0) + count;
+        grantXP(count * 25);
+        advanceQuests('craft', count);
+        showToast(`تم استلام إنتاج ${count} ماكينات!`, 'success', '📦');
+        checkTimersAndNotifications();
+        saveAndRender();
+      }
+
+      function cancelMachineQueueItem(machineInstId, queueIndex) {
+        const mc = state.machines.find((m) => m.id === machineInstId);
+        if (!mc || !Array.isArray(mc.queue) || queueIndex < 0 || queueIndex >= mc.queue.length) return;
+        const def = MACHINES.find((m) => m.id === mc.machineId);
+        const removed = mc.queue.splice(queueIndex, 1)[0];
+        const rec = def && removed && def.recipes.find((r) => r.id === removed.recipeId);
+        if (rec) {
+          rec.inputs.forEach((inp) => addStock(inp.id, inp.qty));
+          SoundEngine.click();
+          showToast(`تم إلغاء ${rec.name} من القائمة واسترجاع مواده للمخزن`, 'info', '↩️');
+        }
+        saveAndRender();
+      }
+
       function harvestAllReadyCrops() {
-        const readyPlots = state.land.filter((p) => p.status === 'ready');
+        const readyPlots = getActiveLandArray().filter((p) => p.status === 'ready');
         if (!readyPlots.length) return;
         let count = 0;
         readyPlots.forEach((plot) => {
@@ -2394,16 +2972,17 @@
         const def = TREES.find((t) => t.id === tr.treeId);
         if (!def) return;
 
-        addStock(def.outputId, 1);
-        if (state.stats) state.stats.harvests = (state.stats.harvests || 0) + 1;
+        const tYield = (tr.level || 1) >= 3 ? 2 : 1;
+        addStock(def.outputId, tYield);
+        if (state.stats) state.stats.harvests = (state.stats.harvests || 0) + tYield;
         const now = Date.now();
         tr.status = 'growing';
         tr.startedAt = now;
-        tr.endsAt = now + getEffectiveDurationMs(def.productionTime, 'tree');
+        tr.endsAt = now + getEffectiveDurationMs(def.productionTime, 'tree', tr.level || 1);
         tr.notified = false;
 
         SoundEngine.sell();
-        spawnFloatingFX(`+1 ${def.icon} ${def.outputName}`, 'text-emerald-600', anchorEl);
+        spawnFloatingFX(`+${tYield} ${def.icon} ${def.outputName}`, 'text-emerald-600', anchorEl);
         grantXP(15, anchorEl);
         advanceQuests('harvest', 1);
         checkTimersAndNotifications();
@@ -2428,7 +3007,7 @@
         const now = Date.now();
         an.status = 'producing';
         an.startedAt = now;
-        an.endsAt = now + getEffectiveDurationMs(def.productionTime);
+        an.endsAt = now + getEffectiveDurationMs(def.productionTime, 'animal', an.level || 1);
         an.notified = false;
 
         SoundEngine.animal(def.sound);
@@ -2444,7 +3023,8 @@
         const def = ANIMALS.find((a) => a.id === an.animalId);
         if (!def) return;
 
-        const finalQty = an.boosted ? def.outputQty * 2 : def.outputQty;
+        const lvlMult = (an.level || 1) >= 3 ? 2 : 1;
+        const finalQty = def.outputQty * lvlMult * (an.boosted ? 2 : 1);
         addStock(def.outputId, finalQty);
         an.status = 'hungry';
         an.boosted = false;
@@ -2524,12 +3104,13 @@
 
       // --- Shop Purchases ---
       function buyFromShop(category, id, qty = 1, anchorEl = null) {
-        const count = Math.max(1, Math.min(99, Math.floor(Number(qty) || 1)));
+        const count = Math.max(1, Math.min(999, Math.floor(Number(qty) || 1)));
         if (category === 'land') {
           const total = LAND_PRICE * count;
           if (!adjustBalance(-total, `شراء ${count} قطعة أرض`, anchorEl)) return;
+          const targetLandArr = getActiveLandArray();
           for (let i = 0; i < count; i++) {
-            state.land.push({
+            targetLandArr.push({
               id: makeId('plot'),
               status: 'empty',
               cropId: null,
@@ -2736,8 +3317,8 @@
         if (authMode === 'register') {
           tabReg.className = 'btn-press py-2.5 px-3 rounded-xl font-bold text-sm bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-2';
           tabLog.className = 'btn-press py-2.5 px-3 rounded-xl font-bold text-sm text-emerald-800 hover:bg-emerald-100 flex items-center justify-center gap-2';
-          label.textContent = 'اسم المزارع (حساب جديد برصيد 8,000 جنيه)';
-          submitText.textContent = 'إنشاء حساب وبدء المزرعة (8,000 جنيه)';
+          label.textContent = 'اسم المزارع (حساب جديد برصيد 3,000 جنيه)';
+          submitText.textContent = 'إنشاء حساب وبدء المزرعة (3,000 جنيه)';
         } else {
           tabLog.className = 'btn-press py-2.5 px-3 rounded-xl font-bold text-sm bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-2';
           tabReg.className = 'btn-press py-2.5 px-3 rounded-xl font-bold text-sm text-emerald-800 hover:bg-emerald-100 flex items-center justify-center gap-2';
@@ -2789,15 +3370,19 @@
 
         const totalStock = Object.values(state.warehouse).reduce((a, b) => a + (Number(b) || 0), 0);
         document.getElementById('hud-warehouse-badge').textContent = totalStock;
+        const mobWh = document.getElementById('mob-warehouse-badge');
+        if (mobWh) mobWh.textContent = totalStock;
         document.getElementById('stat-warehouse-total').textContent = totalStock;
 
         const readyOrders = state.customers.filter((c) => evaluateCustomerProgress(c).isComplete).length;
         document.getElementById('hud-customers-badge').textContent = readyOrders > 0 ? `${readyOrders} جاهز` : state.customers.length;
+        const mobCust = document.getElementById('mob-customers-badge');
+        if (mobCust) mobCust.textContent = readyOrders > 0 ? `${readyOrders}!` : state.customers.length;
         document.getElementById('stat-orders-ready').textContent = readyOrders;
         document.getElementById('stat-completed-orders').textContent = state.completedOrders || 0;
 
         const readyFarmCount =
-          state.land.filter((p) => p.status === 'ready').length +
+          state.land.filter((p) => p.status === 'ready').length + (state.land2 || []).filter((p) => p.status === 'ready').length +
           state.trees.filter((t) => t.status === 'ready').length +
           state.animals.filter((a) => a.status === 'ready').length +
           state.machines.filter((m) => m.status === 'ready').length;
@@ -2818,14 +3403,16 @@
 
         const claimableQuests = (state.quests || []).filter((q) => q.progress >= q.target).length;
         const qBadge = document.getElementById('hud-quests-badge');
-        if (qBadge) {
+        const mobQ = document.getElementById('mob-quests-badge');
+        [qBadge, mobQ].forEach((el) => {
+          if (!el) return;
           if (claimableQuests > 0) {
-            qBadge.textContent = claimableQuests;
-            qBadge.classList.remove('hidden');
+            el.textContent = claimableQuests;
+            el.classList.remove('hidden');
           } else {
-            qBadge.classList.add('hidden');
+            el.classList.add('hidden');
           }
-        }
+        });
 
         const arrPill = document.getElementById('arrange-mode-pill');
         const arrBtn = document.getElementById('btn-toggle-arrange');
@@ -2853,7 +3440,7 @@
         }
 
         // Counts in zone bar
-        document.getElementById('count-land').textContent = state.land.length;
+        document.getElementById('count-land').textContent = state.land.length + (state.land2Unlocked ? state.land2.length : 0);
         document.getElementById('count-trees').textContent = state.trees.length;
         document.getElementById('count-animals').textContent = state.animals.length;
         document.getElementById('count-machines').textContent = state.machines.length;
@@ -2909,8 +3496,33 @@
 
       function renderLand() {
         const grid = document.getElementById('land-grid');
+        const switcher = document.getElementById('field-switcher-bar');
+        const curFieldArr = getActiveLandArray();
+        const curZoneKey = activeField === 'land2' && state.land2Unlocked ? 'land2' : 'land';
+        if (switcher) {
+          const f1Ready = state.land.filter((p) => p.status === 'ready').length;
+          const f2Ready = (state.land2 || []).filter((p) => p.status === 'ready').length;
+          if (state.land2Unlocked) {
+            switcher.innerHTML = `
+              <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" data-switch-field="land" class="btn-press px-3 py-1.5 rounded-xl text-xs font-black ${curZoneKey === 'land' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-900 border border-emerald-200'}">🌾 الحقل الأول (${state.land.length})${f1Ready ? ` • ${f1Ready} جاهز` : ''}</button>
+                <button type="button" data-switch-field="land2" class="btn-press px-3 py-1.5 rounded-xl text-xs font-black ${curZoneKey === 'land2' ? 'bg-teal-600 text-white shadow-sm' : 'bg-white text-teal-900 border border-teal-200'}">🌿 الحقل الثاني (+15% سرعة) (${state.land2.length})${f2Ready ? ` • ${f2Ready} جاهز` : ''}</button>
+              </div>
+              <span class="text-[11px] font-bold text-emerald-800">${curZoneKey === 'land2' ? '✨ جميع محاصيل الحقل الثاني تنمو أسرع بـ 15%!' : 'الحقل الأساسي للمزرعة'}</span>`;
+          } else {
+            const canUnlock = (state.level || 1) >= SECOND_FIELD_MIN_LEVEL && state.balance >= SECOND_FIELD_COST;
+            switcher.innerHTML = `
+              <div class="flex items-center gap-2 text-xs font-bold text-emerald-900">
+                <span>🌿 <b>توسعة الحقل الثاني</b> (+6 أراضٍ +15% سرعة نمو): يُفتح عند المستوى ${SECOND_FIELD_MIN_LEVEL} (مستواك: م${state.level || 1})</span>
+              </div>
+              <button type="button" data-unlock-field2="1" ${canUnlock ? '' : 'disabled'}
+                class="btn-press px-3 py-1.5 rounded-xl text-xs font-black ${canUnlock ? 'bg-teal-600 hover:bg-teal-700 text-white shadow' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}">
+                ${(state.level || 1) >= SECOND_FIELD_MIN_LEVEL ? `🔓 فتح الحقل الثاني (${formatMoney(SECOND_FIELD_COST)} ج)` : `🔒 يتطلب مستوى ${SECOND_FIELD_MIN_LEVEL}`}
+              </button>`;
+          }
+        }
         const harvestAllBtn = document.getElementById('btn-harvest-all-crops');
-        const readyCount = state.land.filter((p) => p.status === 'ready').length;
+        const readyCount = curFieldArr.filter((p) => p.status === 'ready').length;
         if (readyCount > 0) {
           harvestAllBtn.classList.remove('hidden');
           harvestAllBtn.textContent = `🌾 حصاد كل الجاهز (${readyCount})`;
@@ -2920,11 +3532,11 @@
 
         const now = Date.now();
         const hasFert = getStock('magic_fertilizer') > 0;
-        const total = state.land.length;
-        grid.innerHTML = state.land
+        const total = curFieldArr.length;
+        grid.innerHTML = curFieldArr
           .map((plot, index) => {
-            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="land" data-drag-idx="${index}"` : '';
-            const arrHtml = buildArrangeControlsHtml('land', index, total);
+            const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="${curZoneKey}" data-drag-idx="${index}"` : '';
+            const arrHtml = buildArrangeControlsHtml(curZoneKey, index, total);
             const ringCls = arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : '';
             const pLvl = plot.level || 1;
             const soilCls = pLvl >= 3 ? 'soil-lv3' : pLvl === 2 ? 'soil-lv2' : '';
@@ -2982,6 +3594,12 @@
 
       function renderTrees() {
         const grid = document.getElementById('trees-grid');
+        const btnAllTrees = document.getElementById('btn-harvest-all-trees');
+        if (btnAllTrees) {
+          const rCount = state.trees.filter((t) => t.status === 'ready').length;
+          btnAllTrees.classList.toggle('hidden', rCount === 0);
+          btnAllTrees.textContent = `🌳 حصاد كل الأشجار (${rCount})`;
+        }
         if (!state.trees.length) {
           grid.innerHTML = `<div class="col-span-full text-center py-8 bg-emerald-50/70 rounded-2xl border border-dashed border-emerald-300 text-sm text-emerald-800 font-bold">لا توجد أشجار بعد — اشترِ أول شجرة من المتجر لتنتج الفواكه تلقائياً 🌳</div>`;
           return;
@@ -2995,17 +3613,25 @@
             const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="trees" data-drag-idx="${index}"` : '';
             const arrHtml = buildArrangeControlsHtml('trees', index, total);
             const ringCls = arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : '';
+            const tLvl = tr.level || 1;
+            const tUpgCost = tLvl === 1 ? 80 : 160;
+            const tUpgBtn = !arrangeMode && tLvl < 3
+              ? `<button type="button" data-upgrade-tree="${tr.id}" ${state.balance < tUpgCost ? 'disabled' : ''} class="btn-press mt-2 w-full py-1 rounded-xl text-[10px] font-black border ${state.balance >= tUpgCost ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'}">⬆️ ترقية م${tLvl + 1} (${tUpgCost}ج)</button>`
+              : tLvl >= 3
+              ? `<div class="mt-2 w-full text-[10px] font-black text-amber-800 bg-amber-50 py-0.5 rounded-lg border border-amber-200">⭐⭐ م3 (إنتاج 2×)</div>`
+              : '';
             if (tr.status === 'ready') {
               return `
                 <div ${dragAttrs} class="bg-gradient-to-b from-emerald-50 to-amber-50 border-2 border-amber-400 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center shadow-sm ${ringCls}">
-                  <div class="text-xs font-black text-emerald-950">${def.name}</div>
+                  <div class="text-xs font-black text-emerald-950">${def.name} <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">م${tLvl}</span></div>
                   <div class="relative my-2">
                     <span class="text-4xl anim-sway">${def.treeIcon}</span>
                     <span class="text-2xl absolute -bottom-1 -left-2 anim-ready">${def.icon}</span>
                   </div>
                   <button type="button" ${arrangeMode ? 'disabled' : `data-tree-harvest="${tr.id}"`} class="btn-press w-full py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow">
-                    ${def.icon} حصاد ${def.outputName}
+                    ${def.icon} حصاد ${tLvl >= 3 ? '2 ' : ''}${def.outputName}
                   </button>
+                  ${tUpgBtn}
                   ${arrHtml}
                 </div>`;
             }
@@ -3014,7 +3640,7 @@
             const barId = `bar_${tr.id}`;
             return `
               <div ${dragAttrs} class="bg-white border border-emerald-200 rounded-2xl p-3.5 flex flex-col items-center justify-between text-center shadow-sm ${ringCls}">
-                <div class="text-xs font-black text-slate-800">${def.name}</div>
+                <div class="text-xs font-black text-slate-800">${def.name} <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">م${tLvl}</span></div>
                 <div class="relative my-2">
                   <span class="text-4xl anim-sway">${def.treeIcon}</span>
                   <span class="text-lg absolute -bottom-1 -left-1 opacity-75">${def.icon}</span>
@@ -3028,6 +3654,7 @@
                     <div id="${barId}" class="h-full bg-emerald-500 rounded-full" style="width:${pct.toFixed(1)}%"></div>
                   </div>
                 </div>
+                ${tUpgBtn}
                 ${arrHtml}
               </div>`;
           })
@@ -3036,6 +3663,22 @@
 
       function renderAnimals() {
         const grid = document.getElementById('animals-grid');
+        const btnColAll = document.getElementById('btn-collect-all-animals');
+        if (btnColAll) {
+          const rCount = state.animals.filter((a) => a.status === 'ready').length;
+          btnColAll.classList.toggle('hidden', rCount === 0);
+          btnColAll.textContent = `🥛 جمع الكل (${rCount})`;
+        }
+        const btnFeedAll = document.getElementById('btn-feed-all-animals');
+        if (btnFeedAll) {
+          const feedableCount = state.animals.filter((a) => {
+            if (a.status !== 'hungry') return false;
+            const d = ANIMALS.find((x) => x.id === a.animalId);
+            return d && getStock(d.feedId) >= 1;
+          }).length;
+          btnFeedAll.classList.toggle('hidden', feedableCount === 0);
+          btnFeedAll.textContent = `🍽️ إطعام الكل (${feedableCount})`;
+        }
         if (!state.animals.length) {
           grid.innerHTML = `<div class="col-span-full text-center py-8 bg-sky-50/70 rounded-2xl border border-dashed border-sky-300 text-sm text-sky-900 font-bold">الحظيرة فارغة — اشترِ حيوانات أو بركة سمك من المتجر 🐄🐟</div>`;
           return;
@@ -3099,16 +3742,28 @@
                 </button>`;
             }
 
+            const aLvl = an.level || 1;
+            const aUpgCost = aLvl === 1 ? 90 : 180;
+            const outMult = aLvl >= 3 ? 2 : 1;
+            const aUpgBtn = !arrangeMode && aLvl < 3
+              ? `<button type="button" data-upgrade-animal="${an.id}" ${state.balance < aUpgCost ? 'disabled' : ''} class="btn-press mt-2 w-full py-1.5 rounded-xl text-[11px] font-black border ${state.balance >= aUpgCost ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'}">⬆️ ترقية م${aLvl + 1} (${aUpgCost}ج) • ${aLvl === 1 ? 'سرعة +25%' : `سرعة +45% وإنتاج ${def.outputQty * 2} ${def.outputName}`}</button>`
+              : aLvl >= 3
+              ? `<div class="mt-2 text-center text-[10px] font-black text-amber-800 bg-amber-50 py-1 rounded-lg border border-amber-200">⭐⭐ م3 (إنتاج ${def.outputQty * 2} ${def.outputName})</div>`
+              : '';
             const dragAttrs = arrangeMode ? `draggable="true" data-drag-zone="animals" data-drag-idx="${index}"` : '';
             const arrHtml = buildArrangeControlsHtml('animals', index, totalAnim);
             return `
               <div ${dragAttrs} class="bg-white border-2 ${an.status === 'ready' ? 'border-amber-400 bg-amber-50/40' : 'border-slate-200'} ${arrangeMode ? 'ring-2 ring-purple-400 cursor-grab' : ''} rounded-2xl p-3.5 flex flex-col justify-between shadow-sm">
                 <div class="flex items-center justify-between">
-                  <span class="font-black text-sm text-slate-800">${def.name}</span>
+                  <div>
+                    <span class="font-black text-sm text-slate-800">${def.name}</span>
+                    <span class="mr-1 text-[10px] font-black px-1.5 py-0.5 rounded-md ${aLvl >= 3 ? 'bg-amber-400 text-amber-950' : aLvl === 2 ? 'bg-sky-100 text-sky-800' : 'bg-slate-100 text-slate-600'}">م${aLvl}${outMult > 1 ? ' (2×)' : ''}</span>
+                  </div>
                   <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">⏱️ ${formatMinutesLabel(def.productionTime)}</span>
                 </div>
                 ${visualHtml}
                 <div>${footerHtml}</div>
+                ${aUpgBtn}
                 ${arrHtml}
               </div>`;
           })
@@ -3117,6 +3772,12 @@
 
       function renderMachines() {
         const grid = document.getElementById('machines-grid');
+        const btnMachAll = document.getElementById('btn-collect-all-machines');
+        if (btnMachAll) {
+          const rCount = state.machines.filter((m) => m.status === 'ready').length;
+          btnMachAll.classList.toggle('hidden', rCount === 0);
+          btnMachAll.textContent = `📦 استلام الكل (${rCount})`;
+        }
         if (!state.machines.length) {
           grid.innerHTML = `<div class="col-span-full text-center py-8 bg-purple-50/70 rounded-2xl border border-dashed border-purple-300 text-sm text-purple-900 font-bold">لا توجد ماكينات تصنيع بعد — اشترِ ماكينة الخبز أو العصير أو الشواء من المتجر 🏭</div>`;
           return;
@@ -3207,7 +3868,7 @@
                       <span>${it ? it.name : req.itemId}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="font-black ${req.enough ? 'text-emerald-700' : 'text-rose-600'}">${req.have} / ${req.qty}</span>
+                      <span class="font-black ${req.enough ? 'text-emerald-700' : 'text-rose-600'}">المتوفر ${req.have} من ${req.qty}</span>
                       <span>${req.enough ? '✅' : '⏳'}</span>
                     </div>
                   </div>`;
@@ -3279,7 +3940,7 @@
                 ${statuses
                   .map((s) => {
                     const it = ITEMS_BY_ID[s.itemId];
-                    return `<span class="text-xs font-bold px-2.5 py-1 rounded-xl border ${s.enough ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-white text-slate-700 border-slate-200'}">${it ? it.icon + ' ' + it.name : s.itemId}: <b>${s.have}/${s.qty}</b> ${s.enough ? '✅' : '⏳'}</span>`;
+                    return `<span class="text-xs font-bold px-2.5 py-1 rounded-xl border ${s.enough ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-white text-slate-700 border-slate-200'}">${it ? it.icon + ' ' + it.name : s.itemId} — <b>المتوفر ${s.have} من ${s.qty}</b> ${s.enough ? '✅' : '⏳'}</span>`;
                   })
                   .join('')}
               </div>
@@ -3288,6 +3949,52 @@
               class="btn-press shrink-0 px-5 py-2.5 rounded-xl font-black text-xs ${ready ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
               ${ready ? '🚚 شحن شاحنة VIP الآن' : 'بانتظار اكتمال الشحنة'}
             </button>
+          </div>`;
+      }
+
+      function renderSupplyContract() {
+        const box = document.getElementById('supply-contract-box');
+        if (!box || !state || !state.supplyContract) return;
+        const c = state.supplyContract;
+        const statuses = c.items.map((req) => {
+          const have = getStock(req.itemId);
+          return { ...req, have, enough: have >= req.qty };
+        });
+        const ready = statuses.every((s) => s.enough);
+        const now = Date.now();
+        const remSec = c.status === 'active' && c.endsAt ? Math.max(0, (c.endsAt - now) / 1000) : c.durationSec;
+
+        box.innerHTML = `
+          <div class="bg-gradient-to-l from-purple-50 via-indigo-50 to-sky-50 border-2 ${c.status === 'active' ? (ready ? 'border-emerald-500' : 'border-purple-400') : 'border-indigo-200'} rounded-2xl p-4 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
+            <div class="space-y-2 flex-1 w-full">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-2xl">📜</span>
+                <span class="font-black text-sm sm:text-base text-slate-900">عقد توريد كبير: ${c.partnerIcon} ${c.partnerName}</span>
+                <span class="text-[11px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full">💰 ${formatMoney(c.totalReward)} جنيه (+60%)</span>
+                <span class="text-[11px] font-extrabold bg-teal-100 text-teal-900 px-2 py-0.5 rounded-full">+ 👷 تذكرة عامل 20 دقيقة مجاناً</span>
+                ${
+                  c.status === 'active'
+                    ? `<span class="text-[11px] font-black bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full">⏳ <span data-timer-ends="${c.endsAt}" data-timer-started="${c.endsAt - c.durationSec * 1000}">${formatDuration(remSec)}</span></span>`
+                    : `<span class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">⏱️ المدة: 30 دقيقة عند القبول</span>`
+                }
+              </div>
+              <div class="flex flex-wrap gap-2">
+                ${statuses
+                  .map((s) => {
+                    const it = ITEMS_BY_ID[s.itemId];
+                    return `<span class="text-xs font-bold px-2.5 py-1 rounded-xl border ${s.enough ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-white text-slate-700 border-slate-200'}">${it ? it.icon + ' ' + it.name : s.itemId} — <b>المتوفر ${s.have} من ${s.qty}</b> ${s.enough ? '✅' : '⏳'}</span>`;
+                  })
+                  .join('')}
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              ${
+                c.status === 'available'
+                  ? `<button type="button" data-accept-contract="1" class="btn-press px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow">📜 قبول العقد</button>
+                     <button type="button" data-refresh-contract="1" class="btn-press px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-xs">🔄 عقد آخر</button>`
+                  : `<button type="button" data-deliver-contract="1" ${ready ? '' : 'disabled'} class="btn-press px-5 py-2.5 rounded-xl font-black text-xs ${ready ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">${ready ? '✅ تسليم العقد واستلام المكافأة' : 'جاري تجهيز العقد...'}</button>`
+              }
+            </div>
           </div>`;
       }
 
@@ -3301,8 +4008,8 @@
         renderMachines();
         renderCustomersZone();
         renderVipTruck();
+        renderSupplyContract();
         if (activeModal) renderModalContent();
-        if (window.lucide) lucide.createIcons();
       }
 
       /* =====================================================================
@@ -3370,6 +4077,16 @@
           titleEl.textContent = 'مركز الإشعارات';
           subEl.textContent = 'آخر أحداث المزرعة وطلبات العملاء';
           bodyEl.innerHTML = buildNotificationsHtml();
+        } else if (activeModal === 'combo') {
+          iconEl.textContent = '🍽️';
+          titleEl.textContent = 'مطبخ الوجبات الفاخرة والكومبو';
+          subEl.textContent = 'ادمج منتجات الماكينات الجاهزة لصنع وجبات فاخرة تُباع للفنادق والمطاعم بأرباح ضخمة!';
+          bodyEl.innerHTML = buildComboKitchenHtml();
+        } else if (activeModal === 'bank') {
+          iconEl.textContent = '🏦';
+          titleEl.textContent = 'بنك المزرعة والبورصة الزراعية';
+          subEl.textContent = 'اختر القطاع الذي تستثمر فيه رصيدك — تسوية أوتوماتيكية (مكسب أو خسارة) كل 12 ساعة!';
+          bodyEl.innerHTML = buildFarmBankHtml();
         } else if (activeModal === 'analytics') {
           iconEl.textContent = '📊';
           titleEl.textContent = 'إحصائيات المزرعة والأوسمة';
@@ -3380,6 +4097,18 @@
           titleEl.textContent = 'المهام اليومية والمستوى';
           subEl.textContent = `المستوى ${state.level || 1} • الخبرة: ${state.xp || 0} / ${xpNeededForLevel(state.level || 1)}`;
           bodyEl.innerHTML = buildQuestsHtml();
+        } else if (activeModal === 'pasteCode') {
+          iconEl.textContent = '📋';
+          titleEl.textContent = 'استعادة الحساب بكود النقل السريع';
+          subEl.textContent = 'الصق الكود الذي نسخته (يبدأ بـ HF1:) لاستعادة مزرعتك فوراً';
+          bodyEl.innerHTML = `
+            <div class="space-y-3">
+              <textarea id="textarea-sync-code" rows="5" dir="ltr" placeholder="HF1:eyJuYW1lIjoi..."
+                class="w-full p-3 rounded-2xl border-2 border-indigo-300 bg-white text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-600"></textarea>
+              <button type="button" id="btn-confirm-paste-code" class="btn-press w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm shadow">
+                ✅ استعادة الحساب الآن
+              </button>
+            </div>`;
         } else if (activeModal === 'settings') {
           iconEl.textContent = '⚙️';
           titleEl.textContent = 'إعدادات اللعبة';
@@ -3434,9 +4163,10 @@
                 </div>
                 <div class="flex items-center gap-1.5">
                   <button type="button" data-shop-qty-dec="${c.id}" class="btn-press w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 font-black">-</button>
-                  <span class="w-9 text-center font-black text-sm">${q}</span>
+                  <input type="number" min="1" max="999" inputmode="numeric" value="${q}" data-shop-qty-input="${c.id}" data-unit-price="${c.purchasePrice}" aria-label="الكمية"
+                    class="w-12 h-8 text-center font-black text-sm text-slate-900 bg-white border border-emerald-300 rounded-lg focus:outline-none focus:border-emerald-600" />
                   <button type="button" data-shop-qty-inc="${c.id}" class="btn-press w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 font-black">+</button>
-                  <button type="button" data-shop-buy="seeds" data-item-id="${c.id}" ${state.balance < total ? 'disabled' : ''}
+                  <button type="button" data-shop-buy="seeds" data-item-id="${c.id}" data-buy-btn-for="${c.id}" ${state.balance < total ? 'disabled' : ''}
                     class="btn-press flex-1 py-2 rounded-xl text-xs font-black ${state.balance >= total ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
                     شراء (${formatMoney(total)} ج)
                   </button>
@@ -3537,9 +4267,10 @@
               </div>
               <div class="flex items-center gap-2">
                 <button type="button" data-shop-qty-dec="land" class="btn-press w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 font-black">-</button>
-                <span class="w-10 text-center font-black text-base">${q}</span>
+                <input type="number" min="1" max="999" inputmode="numeric" value="${q}" data-shop-qty-input="land" data-unit-price="${LAND_PRICE}" aria-label="عدد الأراضي"
+                  class="w-14 h-9 text-center font-black text-sm text-slate-900 bg-white border border-emerald-300 rounded-xl focus:outline-none focus:border-emerald-600" />
                 <button type="button" data-shop-qty-inc="land" class="btn-press w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 font-black">+</button>
-                <button type="button" data-shop-buy="land" data-item-id="land" ${state.balance < total ? 'disabled' : ''}
+                <button type="button" data-shop-buy="land" data-item-id="land" data-buy-btn-for="land" ${state.balance < total ? 'disabled' : ''}
                   class="btn-press px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm">
                   شراء (${formatMoney(total)} جنيه)
                 </button>
@@ -3565,9 +4296,10 @@
                 <p class="text-xs text-slate-600 leading-relaxed">${m.description}</p>
                 <div class="flex items-center gap-1.5">
                   <button type="button" data-shop-qty-dec="${m.id}" class="btn-press w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 font-black">-</button>
-                  <span class="w-9 text-center font-black text-sm">${q}</span>
+                  <input type="number" min="1" max="999" inputmode="numeric" value="${q}" data-shop-qty-input="${m.id}" data-unit-price="${m.purchasePrice}" aria-label="الكمية"
+                    class="w-12 h-8 text-center font-black text-sm text-slate-900 bg-white border border-emerald-300 rounded-lg focus:outline-none focus:border-emerald-600" />
                   <button type="button" data-shop-qty-inc="${m.id}" class="btn-press w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 font-black">+</button>
-                  <button type="button" data-shop-buy="misc" data-item-id="${m.id}" ${state.balance < total ? 'disabled' : ''}
+                  <button type="button" data-shop-buy="misc" data-item-id="${m.id}" data-buy-btn-for="${m.id}" ${state.balance < total ? 'disabled' : ''}
                     class="btn-press flex-1 py-2 rounded-xl text-xs font-black ${state.balance >= total ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
                     شراء (${formatMoney(total)} ج)
                   </button>
@@ -3686,6 +4418,115 @@
           </div>`;
       }
 
+      function buildComboKitchenHtml() {
+        return `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            ${COMBO_MEALS.map((cm) => {
+              const canMake = cm.inputs.every((inp) => getStock(inp.id) >= inp.qty);
+              const owned = getStock(cm.id);
+              const ingHtml = cm.inputs
+                .map((inp) => {
+                  const it = ITEMS_BY_ID[inp.id];
+                  const have = getStock(inp.id);
+                  const ok = have >= inp.qty;
+                  return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${it ? it.icon + ' ' + it.name : inp.id}: ${have}/${inp.qty}</span>`;
+                })
+                .join('');
+              return `
+                <div class="bg-white rounded-2xl p-4 border-2 ${canMake ? 'border-orange-300' : 'border-slate-200'} shadow-sm flex flex-col justify-between gap-3">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-center gap-2.5">
+                      <span class="text-4xl">${cm.icon}</span>
+                      <div>
+                        <div class="font-black text-sm text-slate-900">${cm.name}</div>
+                        <div class="text-[11px] font-bold text-slate-500">في المخزن: ${owned} • 🏨 للفنادق والمطاعم</div>
+                      </div>
+                    </div>
+                    <div class="text-left text-[11px] font-black">
+                      <div class="text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md">المخزن: ${cm.warehouseSellPrice}ج</div>
+                      <div class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md mt-1">العميل: ${cm.customerSellPrice}ج</div>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">${ingHtml}</div>
+                  <button type="button" data-craft-combo="${cm.id}" ${canMake ? '' : 'disabled'}
+                    class="btn-press w-full py-2.5 rounded-xl text-xs font-black ${canMake ? 'bg-orange-500 hover:bg-orange-600 text-white shadow' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                    ${canMake ? '🍽️ تحضير الكومبو الآن (+50 XP)' : '⚠️ تجهّز المكونات من الماكينات أولاً'}
+                  </button>
+                </div>`;
+            }).join('')}
+          </div>`;
+      }
+
+      function buildFarmBankHtml() {
+        const b = state.bank;
+        const now = Date.now();
+        const remSec = Math.max(0, ((b.nextCycleAt || now) - now) / 1000);
+        const hrs = Math.floor(remSec / 3600);
+        const mins = Math.floor((remSec % 3600) / 60);
+        const secs = Math.floor(remSec % 60);
+        const totalInvested = Object.values(b.holdings || {}).reduce((s, v) => s + (Number(v) || 0), 0);
+
+        const sectorsHtml = BANK_SECTORS.map((sec) => {
+          const invested = Math.floor(b.holdings[sec.id] || 0);
+          return `
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-3xl">${sec.icon}</span>
+                  <div>
+                    <div class="font-black text-sm text-slate-900">${sec.name}</div>
+                    <div class="text-[11px] font-bold text-slate-500">المخاطرة: <span class="text-sky-700">${sec.risk}</span></div>
+                  </div>
+                </div>
+                <span class="text-xs font-black bg-sky-50 text-sky-900 border border-sky-200 px-2.5 py-1 rounded-xl">المستثمر: ${formatMoney(invested)} ج</span>
+              </div>
+              <p class="text-[11px] text-slate-600 font-semibold">${sec.desc}</p>
+              <div class="flex items-center gap-2 pt-1">
+                <input type="number" min="50" step="50" inputmode="numeric" id="bank-input-${sec.id}" value="200" placeholder="المبلغ"
+                  class="w-24 px-2.5 py-2 rounded-xl border border-sky-300 text-center font-black text-xs text-slate-900 bg-white focus:outline-none focus:border-sky-600" />
+                <button type="button" data-bank-deposit="${sec.id}" class="btn-press flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-black text-xs">
+                  📈 إيداع للاستثمار
+                </button>
+                <button type="button" data-bank-withdraw="${sec.id}" ${invested > 0 ? '' : 'disabled'}
+                  class="btn-press px-3 py-2 rounded-xl font-black text-xs ${invested > 0 ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                  سحب الكل
+                </button>
+              </div>
+            </div>`;
+        }).join('');
+
+        const histHtml = (b.history || []).length
+          ? b.history
+              .map((h) => {
+                const tStr = new Date(h.time).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                return `<div class="text-xs p-2.5 rounded-xl border ${h.totalDelta >= 0 ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900'}">
+                  <div class="font-black">${h.totalDelta >= 0 ? '📈 مكسب' : '📉 خسارة'}: ${h.totalDelta >= 0 ? '+' : ''}${formatMoney(h.totalDelta)} جنيه <span class="text-[10px] opacity-75">(${tStr})</span></div>
+                  <div class="text-[11px] mt-0.5">${h.summary}</div>
+                </div>`;
+              })
+              .join('')
+          : `<div class="text-xs text-slate-500 font-bold text-center py-3">لم تتم تسوية أي دورة بورصة بعد — استثمر في قطاع وانتظر التسوية القادمة!</div>`;
+
+        return `
+          <div class="space-y-4">
+            <div class="bg-gradient-to-l from-sky-50 to-indigo-50 rounded-2xl p-4 border border-sky-200 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div class="text-xs font-bold text-slate-600">إجمالي استثماراتك في البورصة</div>
+                <div class="text-xl font-black text-sky-900">💰 ${formatMoney(totalInvested)} جنيه</div>
+              </div>
+              <div class="text-left">
+                <div class="text-xs font-bold text-slate-600">التسوية القادمة (كل 12 ساعة)</div>
+                <div class="text-sm font-black text-indigo-800 bg-white px-3 py-1 rounded-xl border border-indigo-200 mt-0.5">⏳ ${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${sectorsHtml}</div>
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 space-y-2">
+              <div class="font-black text-sm text-slate-800">📊 سجل نتائج البورصة الأخيرة</div>
+              <div class="space-y-2">${histHtml}</div>
+            </div>
+          </div>`;
+      }
+
       function buildAnalyticsHtml() {
         const st = state.stats || {};
         const rev = st.totalRevenue || 0;
@@ -3797,8 +4638,25 @@
               </button>
             </div>`
           : `<div class="mb-4 bg-amber-50 rounded-2xl p-3 border border-amber-300 text-xs font-black text-amber-900">⭐⭐ هذه الماكينة في أعلى مستوى (المستوى 3 — سرعة +45% وإنتاج مضاعف 2×)!</div>`;
+        const qList = Array.isArray(mc.queue) ? mc.queue : [];
+        const queueBox = qList.length > 0
+          ? `<div class="mb-4 bg-white rounded-2xl p-3.5 border border-purple-200 space-y-2">
+              <div class="text-xs font-black text-purple-900">📋 قائمة الانتظار الحالية (${qList.length}/${getMaxQueueForMachine(lvl)}) — اضغط «إلغاء» لاسترجاع المواد:</div>
+              <div class="flex flex-wrap gap-2">
+                ${qList
+                  .map(
+                    (job, qIdx) => `<div class="inline-flex items-center gap-1.5 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-xl text-xs font-bold text-purple-950">
+                      <span>${job.icon || '📦'} ${job.name}</span>
+                      <button type="button" data-cancel-queue-idx="${qIdx}" class="btn-press bg-rose-100 hover:bg-rose-200 text-rose-700 font-black px-1.5 py-0.5 rounded-lg text-[10px]">✕ إلغاء</button>
+                    </div>`
+                  )
+                  .join('')}
+              </div>
+            </div>`
+          : '';
         return `
           ${upgradeBanner}
+          ${queueBox}
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             ${def.recipes
               .map((rec) => {
@@ -3906,9 +4764,26 @@
               </div>
             </div>
 
+            <div class="bg-indigo-50 rounded-2xl p-4 border border-indigo-200 space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div class="font-black text-sm text-indigo-950">📋 كود نقل الحساب السريع (Copy / Paste)</div>
+                  <div class="text-xs text-indigo-800">انسخ كود حسابك والصقه على الموبايل أو جهاز آخر لتفتح مزرعتك فوراً</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" id="settings-copy-sync-code" class="btn-press px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs shadow-sm">
+                    📋 نسخ كود الحساب
+                  </button>
+                  <button type="button" id="settings-open-paste-code" class="btn-press px-3.5 py-2 rounded-xl bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-300 font-black text-xs">
+                    📥 لصق كود
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-200 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <div class="font-black text-sm text-emerald-950">💾 نسخة احتياطية للحساب</div>
+                <div class="font-black text-sm text-emerald-950">💾 نسخة احتياطية كملف (JSON)</div>
                 <div class="text-xs text-emerald-800">احفظ ملف مزرعتك لنقلها بين الأجهزة أو استعادتها في أي وقت</div>
               </div>
               <div class="flex items-center gap-2">
@@ -3924,7 +4799,7 @@
             <div class="bg-rose-50 rounded-2xl p-4 border border-rose-200 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div class="font-black text-sm text-rose-900">🔄 إعادة ضبط حساب «${state.name}»</div>
-                <div class="text-xs text-rose-700">إعادة المزرعة للبداية برصيد 8,000 جنيه (دون التأثير على الحسابات الأخرى)</div>
+                <div class="text-xs text-rose-700">إعادة المزرعة للبداية برصيد 3,000 جنيه (دون التأثير على الحسابات الأخرى)</div>
               </div>
               <button type="button" id="settings-reset-account" class="btn-press px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs">
                 إعادة ضبط الحساب
@@ -3951,6 +4826,7 @@
 
         checkTimersAndNotifications();
         renderGame();
+        if (window.lucide) lucide.createIcons();
 
         if (tickInterval) clearInterval(tickInterval);
         tickInterval = setInterval(checkTimersAndNotifications, 1000);
@@ -4015,7 +4891,7 @@
             Storage.saveAccount(fresh);
             SoundEngine.success();
             enterGame(fresh);
-            showToast(`أهلاً بك يا ${fresh.name}! مزرعتك جاهزة برصيد 8,000 جنيه`, 'success', '🌾');
+            showToast(`أهلاً بك يا ${fresh.name}! مزرعتك جاهزة برصيد 3,000 جنيه`, 'success', '🌾');
           } else {
             const loaded = Storage.loadAccount(name);
             if (!loaded) {
@@ -4051,9 +4927,21 @@
           showToast('تم الخروج من وضع الزراعة المستمرة', 'info', '✋');
         });
         document.getElementById('btn-open-shop').addEventListener('click', () => openModal('shop'));
+        document.getElementById('mob-nav-farm').addEventListener('click', () => {
+          closeModal();
+          activeZoneFilter = 'all';
+          renderZoneVisibility();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        document.getElementById('mob-nav-shop').addEventListener('click', () => openModal('shop'));
+        document.getElementById('mob-nav-warehouse').addEventListener('click', () => openModal('warehouse'));
+        document.getElementById('mob-nav-customers').addEventListener('click', () => openModal('customers'));
+        document.getElementById('mob-nav-quests').addEventListener('click', () => openModal('quests'));
         document.getElementById('btn-open-warehouse').addEventListener('click', () => openModal('warehouse'));
         document.getElementById('btn-open-customers').addEventListener('click', () => openModal('customers'));
         document.getElementById('btn-open-quests').addEventListener('click', () => openModal('quests'));
+        document.getElementById('btn-open-combo').addEventListener('click', () => openModal('combo'));
+        document.getElementById('btn-open-bank').addEventListener('click', () => openModal('bank'));
         document.getElementById('btn-hire-helper').addEventListener('click', (e) => hireFarmHelper(e.currentTarget));
         document.getElementById('btn-open-analytics').addEventListener('click', () => openModal('analytics'));
         document.getElementById('btn-toggle-theme').addEventListener('click', () => {
@@ -4130,6 +5018,9 @@
 
         // Backup Import / Export Handlers
         const backupInput = document.getElementById('input-import-backup');
+        document.getElementById('btn-auth-paste-code').addEventListener('click', () => {
+          openModal('pasteCode');
+        });
         document.getElementById('btn-auth-import-backup').addEventListener('click', () => {
           if (backupInput) backupInput.click();
         });
@@ -4179,6 +5070,31 @@
         // Quick Farm Zone Actions
         document.getElementById('btn-quick-buy-land').addEventListener('click', (e) => buyFromShop('land', 'land', 1, e.currentTarget));
         document.getElementById('btn-harvest-all-crops').addEventListener('click', harvestAllReadyCrops);
+        document.getElementById('btn-harvest-all-trees').addEventListener('click', harvestAllReadyTrees);
+        document.getElementById('btn-collect-all-animals').addEventListener('click', collectAllReadyAnimals);
+        document.getElementById('btn-feed-all-animals').addEventListener('click', feedAllHungryAnimals);
+        document.getElementById('btn-collect-all-machines').addEventListener('click', collectAllReadyMachines);
+
+        // Live Numeric Quantity Input in Shop (updates total price smoothly without losing focus!)
+        document.addEventListener('input', (ev) => {
+          const inp = ev.target.closest('[data-shop-qty-input]');
+          if (!inp || !state) return;
+          const id = inp.getAttribute('data-shop-qty-input');
+          const unitPrice = Number(inp.getAttribute('data-unit-price')) || 1;
+          let val = Math.floor(Number(inp.value) || 0);
+          if (val > 999) { val = 999; inp.value = 999; }
+          const safeQty = Math.max(1, val);
+          shopQuantities[id] = safeQty;
+          const total = safeQty * unitPrice;
+          const btn = document.querySelector(`[data-buy-btn-for="${id}"]`);
+          if (btn) {
+            const labelUnit = id === 'land' ? 'جنيه' : 'ج';
+            btn.textContent = `شراء (${formatMoney(total)} ${labelUnit})`;
+            const canAfford = state.balance >= total && val >= 1;
+            btn.disabled = !canAfford;
+            btn.className = `btn-press flex-1 py-2 rounded-xl text-xs font-black ${canAfford ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`;
+          }
+        });
         document.getElementById('btn-summon-customer').addEventListener('click', summonExtraCustomer);
 
         // Modal Close
@@ -4189,6 +5105,21 @@
 
         // Global Delegated Clicks inside Game & Modals
         document.addEventListener('click', (e) => {
+          if (e.target.closest('#btn-confirm-paste-code')) {
+            const ta = document.getElementById('textarea-sync-code');
+            const decoded = decodeAccountCode(ta ? ta.value : '');
+            if (!decoded) {
+              SoundEngine.error();
+              showToast('الكود غير صحيح! تأكد من نسخه كاملاً بدءاً من HF1:', 'error', '⚠️');
+              return;
+            }
+            Storage.saveAccount(decoded);
+            SoundEngine.success();
+            closeModal();
+            enterGame(decoded);
+            showToast(`تمت استعادة مزرعة «${decoded.name}» بنجاح!`, 'success', '📋');
+            return;
+          }
           if (!state) return;
 
           // Arrange Mode 4-way Move Buttons
@@ -4215,6 +5146,76 @@
           const upgBtn = e.target.closest('[data-upgrade-machine]');
           if (upgBtn) {
             upgradeMachine(upgBtn.getAttribute('data-upgrade-machine'), upgBtn);
+            return;
+          }
+          const swField = e.target.closest('[data-switch-field]');
+          if (swField) {
+            activeField = swField.getAttribute('data-switch-field');
+            SoundEngine.click();
+            renderLand();
+            return;
+          }
+          const unlockF2 = e.target.closest('[data-unlock-field2]');
+          if (unlockF2) {
+            unlockSecondField(unlockF2);
+            return;
+          }
+          const craftCombo = e.target.closest('[data-craft-combo]');
+          if (craftCombo) {
+            craftComboMeal(craftCombo.getAttribute('data-craft-combo'), craftCombo);
+            return;
+          }
+          const depBank = e.target.closest('[data-bank-deposit]');
+          if (depBank) {
+            const secId = depBank.getAttribute('data-bank-deposit');
+            const inp = document.getElementById(`bank-input-${secId}`);
+            bankDeposit(secId, inp ? inp.value : 0, depBank);
+            return;
+          }
+          const wdBank = e.target.closest('[data-bank-withdraw]');
+          if (wdBank) {
+            bankWithdraw(wdBank.getAttribute('data-bank-withdraw'), wdBank);
+            return;
+          }
+          const upgTree = e.target.closest('[data-upgrade-tree]');
+          if (upgTree) {
+            upgradeTree(upgTree.getAttribute('data-upgrade-tree'), upgTree);
+            return;
+          }
+          const upgAnim = e.target.closest('[data-upgrade-animal]');
+          if (upgAnim) {
+            upgradeAnimal(upgAnim.getAttribute('data-upgrade-animal'), upgAnim);
+            return;
+          }
+          if (e.target.closest('[data-accept-contract]')) {
+            acceptSupplyContract();
+            return;
+          }
+          if (e.target.closest('[data-refresh-contract]')) {
+            refreshSupplyContract();
+            return;
+          }
+          const delivContract = e.target.closest('[data-deliver-contract]');
+          if (delivContract) {
+            deliverSupplyContract(delivContract);
+            return;
+          }
+          if (e.target.closest('#settings-copy-sync-code')) {
+            Storage.saveAccount(state);
+            const code = encodeAccountCode(state);
+            copyTextReliable(code).then((ok) => {
+              if (ok) {
+                SoundEngine.success();
+                showToast('تم نسخ كود نقل الحساب! الصقه على أي جهاز آخر للاستعادة 📋', 'success', '📋');
+              } else {
+                SoundEngine.error();
+                showToast('تعذر النسخ التلقائي — جرب حفظ ملف JSON بدلاً منه', 'warning', '⚠️');
+              }
+            });
+            return;
+          }
+          if (e.target.closest('#settings-open-paste-code')) {
+            openModal('pasteCode');
             return;
           }
           const upgLand = e.target.closest('[data-upgrade-land]');
@@ -4318,6 +5319,11 @@
             openModal('machineModal', { machineId: machOpen.getAttribute('data-machine-open') });
             return;
           }
+          const cancelQ = e.target.closest('[data-cancel-queue-idx]');
+          if (cancelQ) {
+            cancelMachineQueueItem(selectedMachineInstanceId, Number(cancelQ.getAttribute('data-cancel-queue-idx')));
+            return;
+          }
           const startRec = e.target.closest('[data-start-recipe]');
           if (startRec) {
             enqueueMachineRecipe(selectedMachineInstanceId, startRec.getAttribute('data-start-recipe'));
@@ -4348,7 +5354,7 @@
           if (incShop) {
             const k = incShop.getAttribute('data-shop-qty-inc');
             const def = k === 'land' ? 1 : 5;
-            shopQuantities[k] = Math.min(99, (shopQuantities[k] || def) + 1);
+            shopQuantities[k] = Math.min(999, (shopQuantities[k] || def) + 1);
             SoundEngine.click();
             renderModalContent();
             return;
